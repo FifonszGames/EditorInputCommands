@@ -9,11 +9,6 @@ void UEditorInputCommand::RegisterCommand()
 {
 	UnregisterCommand();
 	
-	if (!RegistrationData.IsValid())
-	{
-		return;
-	}
-	
 	ERegistrationResult Result;
 	UCommandsExtensionLibrary::RegisterInputCommand(RegistrationData, Result);
 	switch (Result)
@@ -28,8 +23,7 @@ void UEditorInputCommand::RegisterCommand()
 				MapToTargetList();
 			}
 			break;
-		case ERegistrationResult::AlreadyRegistered:
-		case ERegistrationResult::InvalidContext:
+		default:
 			//TODO:: add editor popup for fail
 			break;
 	}

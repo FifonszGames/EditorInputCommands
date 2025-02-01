@@ -16,16 +16,23 @@ namespace CMDUtils
 
 void UCommandsExtensionLibrary::RegisterInputCommand(const FInputCommandRegisterData& InData, ERegistrationResult& OutResult)
 {
+	if (!InData.IsValid())
+	{
+		OutResult = ERegistrationResult::InvalidRegistrationData;
+		return;
+	}
+	
+	TSharedPtr<FBindingContext> BindingContext = InData.GetContext();
+	if (!BindingContext.IsValid())
+	{
+		OutResult = ERegistrationResult::InvalidContext;
+		return;
+	}
+	
 	const FCommandIdentifier Identifier = InData.GetIdentifier();
 	if (Identifier.IsRegistered())
 	{
 		OutResult = ERegistrationResult::AlreadyRegistered;
-		return;
-	}
-	TSharedPtr<FBindingContext> BindingContext = Identifier.AsContext();
-	if (!BindingContext.IsValid())
-	{
-		OutResult = ERegistrationResult::InvalidContext;
 		return;
 	}
 	
@@ -124,6 +131,11 @@ bool UCommandsExtensionLibrary::IsCommandRegistered(const FCommandIdentifier& Co
 FCommandIdentifier UCommandsExtensionLibrary::MakeCommandIdentifier(const FName BindingContext, const FName Identifier)
 {
 	return FCommandIdentifier(BindingContext, Identifier);
+}
+
+FNewContextBinding UCommandsExtensionLibrary::MakeNewContextBinding(const FName ContextBindingName, const FText& ContextDescription)
+{
+	return FNewContextBinding(ContextBindingName, ContextDescription);
 }
 
 TArray<FName> UCommandsExtensionLibrary::GetBindingContextNames()

@@ -11,7 +11,11 @@ struct FBindingContextProvider
 	GENERATED_BODY()
 	
 	virtual ~FBindingContextProvider() = default;
+
+	bool IsValid() const { return AsContext().IsValid(); }
+	
 	virtual FName GetBindingContextName() const { return NAME_None; }
+	virtual TSharedPtr<FBindingContext> AsContext() const;
 };
 
 USTRUCT(BlueprintType)
@@ -19,27 +23,33 @@ struct FExistingContextBinding : public FBindingContextProvider
 {
 	GENERATED_BODY()
 	
-	virtual FName GetBindingContextName() const override { return BindingContext; }
+	virtual FName GetBindingContextName() const override { return BindingContextName; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetBindingContextNames"))
-	FName BindingContext;
+	FName BindingContextName;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, meta = (HasNativeMake = "CommandsExtensionLibrary.MakeNewContextBinding"))
 struct FNewContextBinding : public FBindingContextProvider
 {
 	GENERATED_BODY()
-	
-	virtual FName GetBindingContextName() const override { return BindingContext; }
-	void Refresh();
+	explicit FNewContextBinding() = default;
+	explicit FNewContextBinding(const FName BindingContextName, const FText& InContextDescription);
+
+	virtual FName GetBindingContextName() const override { return BindingContextName; }
+	virtual TSharedPtr<FBindingContext> AsContext() const override;
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName BindingContext;
+	FName BindingContextName;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FText ContextDescription;
 
 private:
-	TSharedPtr<FBindingContext> Context;
+	void CreateContext() const;
+	
+	mutable TSharedPtr<FBindingContext> Context;
 };
 
 UENUM(BlueprintType)
@@ -56,16 +66,17 @@ struct FInputCommandRegisterData
 {
 	GENERATED_BODY()
 
+	explicit FInputCommandRegisterData();
+	
 	bool IsValid() const;
+	
+	TSharedPtr<FBindingContext> GetContext() const;
 	FCommandIdentifier GetIdentifier() const;
 
 	static FSlateIcon GetIcon();
-	
-	UPROPERTY(EditAnywhere, meta = (ExcludeBaseStruct, BaseStruct="/Script/CommandsExtension.BindingContextProvider"))
-	FInstancedStruct ContextProvider;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetBindingContextNames"))
-	FName BindingContext;
+	UPROPERTY(EditAnywhere, NoClear, meta = (ExcludeBaseStruct, BaseStruct="/Script/CommandsExtension.BindingContextProvider"))
+	FInstancedStruct ContextProvider;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Identifier;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
@@ -86,7 +97,7 @@ struct FCommandIdentifier
 	GENERATED_BODY()
 	explicit FCommandIdentifier() = default;
 	explicit FCommandIdentifier(const FName& InBindingContext, const FName& InCommandName) : BindingContext(InBindingContext), Identifier(InCommandName) {}
-	explicit FCommandIdentifier(const FInputCommandRegisterData& Data) : FCommandIdentifier(Data.BindingContext, Data.Identifier) {}
+	explicit FCommandIdentifier(const FInputCommandRegisterData& Data);
 
 	TSharedPtr<FUICommandInfo> AsInfo() const;
 	TSharedPtr<FBindingContext> AsContext() const;

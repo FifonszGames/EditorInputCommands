@@ -14,6 +14,7 @@ enum class ERegistrationResult : uint8
 {
 	Success,
 	AlreadyRegistered,
+	InvalidRegistrationData,
 	InvalidContext
 };
 
@@ -51,6 +52,9 @@ public:
 	UFUNCTION(BlueprintPure, meta=(NativeMakeFunc))
 	static FCommandIdentifier MakeCommandIdentifier(UPARAM(Meta=(GetOptions=GetBindingContextNames)) const FName BindingContext,
 		UPARAM(Meta=(GetOptions=GetCommandNames)) const FName Identifier);
+
+	UFUNCTION(BlueprintPure, meta=(NativeMakeFunc, AutoCreateRefTerm="ContextDescription"))
+	static FNewContextBinding MakeNewContextBinding(const FName ContextBindingName, const FText& ContextDescription);
 	
 	UFUNCTION()
 	static TArray<FName> GetBindingContextNames();
