@@ -126,6 +126,16 @@ FCommandIdentifier UCommandsExtensionLibrary::MakeCommandIdentifier(const FName 
 	return FCommandIdentifier(BindingContext, Identifier);
 }
 
+TArray<FName> UCommandsExtensionLibrary::GetBindingContextNames()
+{
+	TArray<FName> Names;
+	ForeachBindingContext([&Names](const TSharedPtr<FBindingContext>& Context)
+	{
+		Names.AddUnique(Context->GetContextName());
+	});
+	return Names;
+}
+
 void UCommandsExtensionLibrary::ForeachBindingContext(const TFunctionRef<void(const TSharedPtr<FBindingContext>& Context)>& InFunc)
 {
 	TArray<TSharedPtr<FBindingContext>> OutInputContexts;
@@ -145,16 +155,6 @@ void UCommandsExtensionLibrary::ForeachCommandInContext(const FName& ContextName
 	{
 		InFunc(Command);
 	}
-}
-
-TArray<FName> UCommandsExtensionLibrary::GetBindingContextNames()
-{
-	TArray<FName> Names;
-	ForeachBindingContext([&Names](const TSharedPtr<FBindingContext>& Context)
-	{
-		Names.AddUnique(Context->GetContextName());
-	});
-	return Names;
 }
 
 TArray<FName> UCommandsExtensionLibrary::GetCommandNames()

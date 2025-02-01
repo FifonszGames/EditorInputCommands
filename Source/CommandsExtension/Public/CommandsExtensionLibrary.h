@@ -51,13 +51,14 @@ public:
 	UFUNCTION(BlueprintPure, meta=(NativeMakeFunc))
 	static FCommandIdentifier MakeCommandIdentifier(UPARAM(Meta=(GetOptions=GetBindingContextNames)) const FName BindingContext,
 		UPARAM(Meta=(GetOptions=GetCommandNames)) const FName Identifier);
-
+	
+	UFUNCTION()
+	static TArray<FName> GetBindingContextNames();
+	
 	static void ForeachBindingContext(const TFunctionRef<void(const TSharedPtr<FBindingContext>& Context)>& InFunc);
 	static void ForeachCommandInContext(const FName& ContextName, const TFunctionRef<void(const TSharedPtr<FUICommandInfo>& Command)>& InFunc);
 	
 private:
-	UFUNCTION()
-	static TArray<FName> GetBindingContextNames();
 	UFUNCTION()
 	static TArray<FName> GetCommandNames();
 	UFUNCTION()

@@ -1,8 +1,46 @@
 ﻿// Copyright FifonszGames. All Rights Reserved.
 
 #pragma once
+#include "StructUtils/InstancedStruct.h"
 
 #include "CommandExtensionTypes.generated.h"
+
+USTRUCT(NotBlueprintType)
+struct FBindingContextProvider
+{
+	GENERATED_BODY()
+	
+	virtual ~FBindingContextProvider() = default;
+	virtual FName GetBindingContextName() const { return NAME_None; }
+};
+
+USTRUCT(BlueprintType)
+struct FExistingContextBinding : public FBindingContextProvider
+{
+	GENERATED_BODY()
+	
+	virtual FName GetBindingContextName() const override { return BindingContext; }
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetBindingContextNames"))
+	FName BindingContext;
+};
+
+USTRUCT(BlueprintType)
+struct FNewContextBinding : public FBindingContextProvider
+{
+	GENERATED_BODY()
+	
+	virtual FName GetBindingContextName() const override { return BindingContext; }
+	void Refresh();
+
+protected:
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	FName BindingContext;
+
+private:
+	TSharedPtr<FBindingContext> Context;
+};
 
 UENUM(BlueprintType)
 enum class ECommandRepeatMode : uint8
@@ -22,6 +60,9 @@ struct FInputCommandRegisterData
 	FCommandIdentifier GetIdentifier() const;
 
 	static FSlateIcon GetIcon();
+	
+	UPROPERTY(EditAnywhere, meta = (ExcludeBaseStruct, BaseStruct="/Script/CommandsExtension.BindingContextProvider"))
+	FInstancedStruct ContextProvider;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetBindingContextNames"))
 	FName BindingContext;

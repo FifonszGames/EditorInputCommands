@@ -4,8 +4,33 @@
 #include "CommandExtensionTypes.h"
 
 #include "CommandsExtension.h"
+#include "CommandsExtensionLibrary.h"
 #include "EditorInputCommand.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
+
+void FNewContextBinding::Refresh()
+{
+	if (Context.IsValid())
+	{
+		if (Context->GetContextName().IsEqual(BindingContext))
+		{
+			return;
+		}
+		FInputBindingManager::Get().RemoveContextByName(Context->GetContextName());
+		Context.Reset();
+	}
+	if (UCommandsExtensionLibrary::GetBindingContextNames().Contains(BindingContext))
+	{
+		//context with this name already exists
+	}
+	else
+	{
+		Context = MakeShareable(new FBindingContext(BindingContext,
+			FText::FromString(TEXT("Editor Input Commands")),
+			NAME_None,
+			NAME_None));
+	}
+}
 
 bool FInputCommandRegisterData::IsValid() const
 {
