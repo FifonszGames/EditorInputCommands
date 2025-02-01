@@ -1,0 +1,25 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "CommandsExtension",
+	"Description": "Create input commands in the editor with assets",
+	"Category": "Editor",
+	"CreatedBy": "FifonszGames",
+	"CreatedByURL": "https://dev.epicgames.com/community/profile/ojpzG/FifonszGames",
+	"DocsURL": "",
+	"FabURL": "",
+	"CanContainContent": false,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"EngineVersion": "5.5",
+	"Modules": [
+		{
+			"Name": "CommandsExtension",
+			"Type": "Editor",
+			"LoadingPhase": "PreLoadingScreen",
+			"PlatformAllowList": [ "Win64" ]
+		}
+	]
+}
