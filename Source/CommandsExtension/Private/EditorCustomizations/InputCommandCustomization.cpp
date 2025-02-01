@@ -6,6 +6,7 @@
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "EditorInputCommand.h"
+#include "EditorCustomizations/EditorCommandStatusBox.h"
 
 #define TextFromString(RawString) FText::FromString(TEXT(RawString))
 
@@ -43,8 +44,15 @@ void FInputCommandCustomization::CustomizeDetails(IDetailLayoutBuilder& InDetail
 	{
 		return;
 	}
-	TWeakObjectPtr Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
+	TSharedRef<IPropertyHandle> Handle = InDetailLayout.GetProperty(InDetailLayout.GetTopLevelProperty());
+	IDetailCategoryBuilder& StatusBuilder = InDetailLayout.EditCategory(TEXT("AStatus"));
+	StatusBuilder.AddCustomRow(TextFromString("Status"))
+	[
+		SNew(SEditorCommandStatusBox)
+		.CommandHandle(Handle)
+	];
 	
+	TWeakObjectPtr Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
 	const FName RegistrationCategoryName = TEXT("Registration");
 	IDetailCategoryBuilder& CategoryBuilder = InDetailLayout.EditCategory(RegistrationCategoryName);
 	CategoryBuilder.AddCustomRow(FText::FromName(RegistrationCategoryName))
