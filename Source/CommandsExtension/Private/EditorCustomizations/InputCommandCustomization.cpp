@@ -44,15 +44,22 @@ void FInputCommandCustomization::CustomizeDetails(IDetailLayoutBuilder& InDetail
 	{
 		return;
 	}
-	TSharedRef<IPropertyHandle> Handle = InDetailLayout.GetProperty(InDetailLayout.GetTopLevelProperty());
-	IDetailCategoryBuilder& StatusBuilder = InDetailLayout.EditCategory(TEXT("AStatus"));
+	TWeakObjectPtr Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
+	
+	TSharedRef<IPropertyHandle> RegisterProp = InDetailLayout.GetProperty(GET_MEMBER_NAME_CHECKED(UEditorInputCommand, RegistrationData));
+	TSharedRef<IPropertyHandle> TargetListProp = InDetailLayout.GetProperty(GET_MEMBER_NAME_CHECKED(UEditorInputCommand, RegistrationData));
+	for (const TSharedRef<IPropertyHandle>& Element : TArray{RegisterProp, TargetListProp})
+	{
+		Element->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FInputCommandCustomization::OnPropertyValueChanged));
+	}
+	
+	IDetailCategoryBuilder& StatusBuilder = InDetailLayout.EditCategory(TEXT("AStatus"), TextFromString("Status"));
 	StatusBuilder.AddCustomRow(TextFromString("Status"))
 	[
-		SNew(SEditorCommandStatusBox)
-		.CommandHandle(Handle)
+		SAssignNew(StatusBox, SEditorCommandStatusBox)
+		.TargetCommand(Target)
 	];
 	
-	TWeakObjectPtr Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
 	const FName RegistrationCategoryName = TEXT("Registration");
 	IDetailCategoryBuilder& CategoryBuilder = InDetailLayout.EditCategory(RegistrationCategoryName);
 	CategoryBuilder.AddCustomRow(FText::FromName(RegistrationCategoryName))
@@ -94,6 +101,14 @@ void FInputCommandCustomization::CustomizeDetails(IDetailLayoutBuilder& InDetail
 			                            [](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered() && Command.MappedLists.Contains(Command.TargetList); })
 		]
 	];
+}
+
+void FInputCommandCustomization::OnPropertyValueChanged() const
+{
+	if (StatusBox.IsValid())
+	{
+		StatusBox->RefreshState();
+	}	
 }
 
 #undef TextFromString

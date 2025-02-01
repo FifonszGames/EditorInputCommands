@@ -4,6 +4,7 @@
 
 #include "StatusBox.h"
 
+class UEditorInputCommand;
 enum class ERegistrationResult : uint8;
 
 class SEditorCommandStatusBox : public SStatusBox<ERegistrationResult>
@@ -15,14 +16,15 @@ public:
 		, _AutoWrapText(true)
 		{}
 		
-	SLATE_ARGUMENT(TSharedPtr<IPropertyHandle>, CommandHandle)
 	SLATE_ARGUMENT(FMargin, Padding)
 	SLATE_ARGUMENT(FVector2D, IconSize)
 	SLATE_ARGUMENT(bool, AutoWrapText)
+	SLATE_ARGUMENT(TWeakObjectPtr<UEditorInputCommand>, TargetCommand)	
 		
 	SLATE_END_ARGS()
 	
 	void Construct(const FArguments& InArgs);
+	void RefreshState();
 
 protected:
 	virtual const FSlateBrush* GetImageBrush(ERegistrationResult ForStatus) const override;
@@ -30,7 +32,5 @@ protected:
 	virtual FText GetStatusText(ERegistrationResult NewStatus) const override;
 
 private:
-	void OnChildChanged();
-	
-	TSharedPtr<IPropertyHandle> CommandHandle;
+	TWeakObjectPtr<UEditorInputCommand> TargetCommand;
 };

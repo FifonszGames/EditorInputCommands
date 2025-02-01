@@ -7,22 +7,32 @@
 
 void SEditorCommandStatusBox::Construct(const FArguments& InArgs)
 {
-	CommandHandle = InArgs._CommandHandle;
-	UObject* Value = nullptr;
-	FPropertyAccess::Result Result = CommandHandle->GetValue(Value);
-	if (Result == FPropertyAccess::Result::Success)
-	{
-		CommandHandle->SetOnChildPropertyValueChanged(FSimpleDelegate::CreateSP(this, &SEditorCommandStatusBox::OnChildChanged));
-	}
+	TargetCommand = InArgs._TargetCommand;
+
 	SStatusBox::Construct(SStatusBox::FArguments()
 		.BoxStatus(ERegistrationResult::Success)
 		.Padding(InArgs._Padding)
 		.IconSize(InArgs._IconSize)
 		.AutoWrapText(InArgs._AutoWrapText));
+	
+	RefreshState();
+}
+
+void SEditorCommandStatusBox::RefreshState()
+{
+	if (UEditorInputCommand* Command = TargetCommand.Get())
+	{
+		
+	}
+	else
+	{
+		SetStatus(ERegistrationResult::InvalidRegistrationData);
+	}
 }
 
 const FSlateBrush* SEditorCommandStatusBox::GetImageBrush(ERegistrationResult ForStatus) const
 {
+	const FSlateBrush* BaseBrush = SStatusBox::GetImageBrush(ForStatus);
 	return SStatusBox::GetImageBrush(ForStatus);
 }
 
@@ -34,9 +44,4 @@ const FSlateBrush* SEditorCommandStatusBox::GetBorderBrush(ERegistrationResult N
 FText SEditorCommandStatusBox::GetStatusText(ERegistrationResult ForStatus) const
 {
 	return FText::FromString(TEXT("YEEEET"));
-}
-
-void SEditorCommandStatusBox::OnChildChanged()
-{
-	int32 a = 32;
 }
