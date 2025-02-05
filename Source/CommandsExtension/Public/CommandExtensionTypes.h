@@ -99,6 +99,9 @@ struct FCommandIdentifier
 	explicit FCommandIdentifier(const FName& InBindingContext, const FName& InCommandName) : BindingContext(InBindingContext), Identifier(InCommandName) {}
 	explicit FCommandIdentifier(const FInputCommandRegisterData& Data);
 
+	bool operator==(const FCommandIdentifier& Other) const { return BindingContext.IsEqual(Other.BindingContext) && Identifier.IsEqual(Other.Identifier); }
+	bool operator!=(const FCommandIdentifier& Other) const { return !(*this == Other); }
+
 	TSharedPtr<FUICommandInfo> AsInfo() const;
 	TSharedPtr<FBindingContext> AsContext() const;
 	

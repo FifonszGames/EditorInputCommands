@@ -5,7 +5,7 @@
 #include "IDetailCustomization.h"
 
 class IDetailLayoutBuilder;
-class SEditorCommandStatusBox;
+class SEditorCommandRegistrationStatusBox;
 
 class FInputCommandCustomization : public IDetailCustomization
 {
@@ -16,5 +16,5 @@ public:
 	
 private:
 	void OnPropertyValueChanged() const;
-	TSharedPtr<SEditorCommandStatusBox> StatusBox;
+	TSharedPtr<SEditorCommandRegistrationStatusBox> StatusBox;
 };

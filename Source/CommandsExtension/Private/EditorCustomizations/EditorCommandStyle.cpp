@@ -36,6 +36,11 @@ const ISlateStyle& FEditorCommandStyle::Get()
 	return *StyleInstance;
 }
 
+FName FEditorCommandStyle::GetOutlineStyleName()
+{
+	return TEXT("RoundedOutline");
+}
+
 TSharedRef<FSlateStyleSet> FEditorCommandStyle::CreateStyle()
 {
 	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("EditorCommandStyle"));
@@ -46,6 +51,7 @@ TSharedRef<FSlateStyleSet> FEditorCommandStyle::CreateStyle()
 	
 	Style->Set(GetClassIconStyleSetName<UEditorInputCommand>(), new IMAGE_BRUSH("Icon128", Icon16x16));
 	Style->Set(GetClassThumbnailStyleSetName<UEditorInputCommand>(), new IMAGE_BRUSH("Icon128", Icon64x64));
+	Style->Set(GetOutlineStyleName(), new FSlateRoundedBoxBrush(FStyleColors::Transparent, 4.0f, FStyleColors::White, 1.0f));
 	return Style;
 }
 

@@ -2,13 +2,12 @@
 
 #include "EditorCustomizations/InputCommandCustomization.h"
 
+#include "CommandsExtensionLibrary.h"
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
 #include "EditorInputCommand.h"
-#include "EditorCustomizations/EditorCommandStatusBox.h"
-
-#define TextFromString(RawString) FText::FromString(TEXT(RawString))
+#include "EditorCustomizations/EditorCommandRegistrationStatusBox.h"
 
 namespace ButtonHelpers
 {
@@ -47,37 +46,40 @@ void FInputCommandCustomization::CustomizeDetails(IDetailLayoutBuilder& InDetail
 	TWeakObjectPtr Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
 	
 	TSharedRef<IPropertyHandle> RegisterProp = InDetailLayout.GetProperty(GET_MEMBER_NAME_CHECKED(UEditorInputCommand, RegistrationData));
-	TSharedRef<IPropertyHandle> TargetListProp = InDetailLayout.GetProperty(GET_MEMBER_NAME_CHECKED(UEditorInputCommand, RegistrationData));
+	TSharedRef<IPropertyHandle> TargetListProp = InDetailLayout.GetProperty(GET_MEMBER_NAME_CHECKED(UEditorInputCommand, TargetList));
 	for (const TSharedRef<IPropertyHandle>& Element : TArray{RegisterProp, TargetListProp})
 	{
 		Element->SetOnPropertyValueChanged(FSimpleDelegate::CreateSP(this, &FInputCommandCustomization::OnPropertyValueChanged));
 	}
 	
-	IDetailCategoryBuilder& StatusBuilder = InDetailLayout.EditCategory(TEXT("AStatus"), TextFromString("Status"));
-	StatusBuilder.AddCustomRow(TextFromString("Status"))
-	[
-		SAssignNew(StatusBox, SEditorCommandStatusBox)
-		.TargetCommand(Target)
-	];
-	
 	const FName RegistrationCategoryName = TEXT("Registration");
 	IDetailCategoryBuilder& CategoryBuilder = InDetailLayout.EditCategory(RegistrationCategoryName);
 	CategoryBuilder.AddCustomRow(FText::FromName(RegistrationCategoryName))
 	[
-		SNew(SHorizontalBox)
-		+SHorizontalBox::Slot()
-		.HAlign(HAlign_Left)
+		SNew(SVerticalBox)
+		+SVerticalBox::Slot()
+		.AutoHeight()
 		[
-			ButtonHelpers::CreateButton(TextFromString("Register Command"), Target,
-			                            [](UEditorInputCommand& Command) { Command.RegisterCommand(); },
-			                            [](const UEditorInputCommand& Command) { return Command.RegistrationData.IsValid(); })
+			SAssignNew(StatusBox, SEditorCommandRegistrationStatusBox)
+			.TargetCommand(Target)
 		]
-		+SHorizontalBox::Slot()
-		.HAlign(HAlign_Left)
+		+SVerticalBox::Slot()
 		[
-			ButtonHelpers::CreateButton(TextFromString("Unregister Command"), Target,
-				[](UEditorInputCommand& Command) { Command.UnregisterCommand(); },
-				[](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered(); })
+			SNew(SHorizontalBox)
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
+			[
+				ButtonHelpers::CreateButton(TextFromString("Register Command"), Target,
+											[](UEditorInputCommand& Command) { Command.RegisterCommand(); },
+											[](const UEditorInputCommand& Command) { return Command.RegistrationData.IsValid(); })
+			]
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
+			[
+				ButtonHelpers::CreateButton(TextFromString("Unregister Command"), Target,
+					[](UEditorInputCommand& Command) { Command.UnregisterCommand(); },
+					[](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered(); })
+			]	
 		]
 	];
 

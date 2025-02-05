@@ -11,6 +11,7 @@ public:
 	static void Init();
 	static void Shutdown();
 	static const ISlateStyle& Get();
+	static FName GetOutlineStyleName();
 	
 	template<typename ClassType>
 	static FName GetClassIconStyleSetName()

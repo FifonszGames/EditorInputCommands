@@ -46,4 +46,5 @@ private:
 	FOnExecute ExecuteDelegate;
 	
 	friend class FInputCommandCustomization;
+	friend class SEditorCommandRegistrationStatusBox;
 };

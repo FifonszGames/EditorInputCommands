@@ -9,6 +9,8 @@
 
 class UEditorInputCommand;
 
+#define TextFromString(RawString) FText::FromString(TEXT(RawString))
+
 UENUM(BlueprintType)
 enum class ERegistrationResult : uint8
 {
