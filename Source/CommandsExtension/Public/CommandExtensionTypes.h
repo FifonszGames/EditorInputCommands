@@ -36,6 +36,7 @@ struct FNewContextBinding : public FBindingContextProvider
 	GENERATED_BODY()
 	explicit FNewContextBinding() = default;
 	explicit FNewContextBinding(const FName BindingContextName, const FText& InContextDescription);
+	virtual ~FNewContextBinding() override;
 
 	virtual FName GetBindingContextName() const override { return BindingContextName; }
 	virtual TSharedPtr<FBindingContext> AsContext() const override;

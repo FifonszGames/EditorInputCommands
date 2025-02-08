@@ -16,6 +16,9 @@ public:
 	void Construct(const FArguments& InArgs);
 	void RefreshState();
 
+protected:
+	virtual FText GetStatusText(EStatusBoxState ForStatus) const override;
+
 private:
 	TWeakObjectPtr<const UEditorInputCommand> TargetCommand;
 	FSlateBrush BorderBrush;

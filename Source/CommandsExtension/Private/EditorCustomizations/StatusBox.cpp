@@ -10,11 +10,11 @@
 struct FStatusBoxData
 {
 	FStatusBoxData(const FSlateBrush* InImageBrush, const FText& InStatusText, const FSlateColor& InBorderColor) 
-		:  ImageBrush(InImageBrush), StatusText(InStatusText), BorderColor(InBorderColor) {}
+		:  ImageBrush(InImageBrush), StatusText(InStatusText), StatusColor(InBorderColor) {}
 
 	const FSlateBrush* ImageBrush;
 	FText StatusText;
-	FSlateColor BorderColor;
+	FSlateColor StatusColor;
 };
 
 static const TMap<EStatusBoxState, FStatusBoxData> DefaultStatusData =
@@ -93,7 +93,7 @@ void SStatusBox::OnStatusChanged(EStatusBoxState NewStatus)
 	}
 	BorderBrush.OutlineSettings.Color = StatusToColor(NewStatus);
 	
-	SetBorderImage(GetBorderBrush(NewStatus));
+	SetBorderImage(&BorderBrush);
 	StatusImage->SetImage(GetImageBrush(NewStatus));
 	StatusText->SetText(GetStatusText(NewStatus));
 }
@@ -115,5 +115,5 @@ FText SStatusBox::GetStatusText(EStatusBoxState ForStatus) const
 
 FSlateColor SStatusBox::StatusToColor(EStatusBoxState Status) const
 {
-	return DefaultStatusData[Status].BorderColor;
+	return DefaultStatusData[Status].StatusColor;
 }

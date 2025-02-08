@@ -18,6 +18,15 @@ FNewContextBinding::FNewContextBinding(const FName BindingContextName, const FTe
 	CreateContext();
 }
 
+FNewContextBinding::~FNewContextBinding()
+{
+	if (Context.IsValid())
+	{
+		FInputBindingManager::Get().RemoveContextByName(Context->GetContextName());
+		Context.Reset();
+	}
+}
+
 TSharedPtr<FBindingContext> FNewContextBinding::AsContext() const
 {
 	CreateContext();

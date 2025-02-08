@@ -12,6 +12,7 @@
 	SLATE_ARGUMENT(FMargin, Padding) \
 	SLATE_ARGUMENT(FVector2D, IconSize) \
 	SLATE_ARGUMENT(bool, AutoWrapText) \
+	SLATE_ATTRIBUTE(EStatusBoxState, BoxStatus) \
 	SLATE_DEFAULT_SLOT(FArguments, Content)
 
 enum class EStatusBoxState : uint8
@@ -25,7 +26,6 @@ class SStatusBox : public SBorder
 {
 public:
 	SLATE_STATUS_BOX_ARGS(SStatusBox)
-	SLATE_ATTRIBUTE(EStatusBoxState, BoxStatus)
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
