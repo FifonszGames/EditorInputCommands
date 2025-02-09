@@ -11,7 +11,6 @@ void SEditorCommandRegistrationStatusBox::Construct(const FArguments& InArgs)
 	TargetCommand = InArgs._TargetCommand;
 	
 	SStatusBox::Construct(SStatusBox::FArguments()
-		.BoxStatus(InArgs._BoxStatus)
 		.Padding(InArgs._Padding)
 		.IconSize(InArgs._IconSize)
 		.AutoWrapText(InArgs._AutoWrapText)
@@ -19,29 +18,29 @@ void SEditorCommandRegistrationStatusBox::Construct(const FArguments& InArgs)
 			InArgs._Content.Widget
 		]);
 	
-	RefreshState();
+	RefreshState(true);
 }
 
-void SEditorCommandRegistrationStatusBox::RefreshState()
+void SEditorCommandRegistrationStatusBox::RefreshState(const bool bInForceIfSame)
 {
 	if (const UEditorInputCommand* Command = TargetCommand.Get())
 	{
 		if (!Command->CurrentIdentifier.IsRegistered())
 		{
-			SetStatus(EStatusBoxState::Error);
+			SetStatus(EStatusBoxState::Error, bInForceIfSame);
 		}
 		else if (Command->RegistrationData.GetIdentifier() == Command->CurrentIdentifier)
 		{
-			SetStatus(EStatusBoxState::Success);
+			SetStatus(EStatusBoxState::Success, bInForceIfSame);
 		}
 		else
 		{
-			SetStatus(EStatusBoxState::Warning);
+			SetStatus(EStatusBoxState::Warning, bInForceIfSame);
 		}
 	}
 	else
 	{
-		SetStatus(EStatusBoxState::Error);
+		SetStatus(EStatusBoxState::Error, bInForceIfSame);
 	}
 }
 

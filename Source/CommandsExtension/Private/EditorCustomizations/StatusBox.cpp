@@ -39,8 +39,6 @@ static const TMap<EStatusBoxState, FStatusBoxData> DefaultStatusData =
 
 void SStatusBox::Construct(const FArguments& InArgs)
 {
-	BoxStatus = InArgs._BoxStatus;
-	
 	SBorder::Construct(SBorder::FArguments()
 		.Padding(InArgs._Padding)
 		.ForegroundColor(FAppStyle::Get().GetSlateColor("Colors.Red"))
@@ -71,13 +69,11 @@ void SStatusBox::Construct(const FArguments& InArgs)
 				InArgs._Content.Widget
 			]
 		]);
-		
-	OnStatusChanged(BoxStatus.Get());
 }
 
-void SStatusBox::SetStatus(EStatusBoxState NewStatus)
+void SStatusBox::SetStatus(const EStatusBoxState NewStatus, const bool bInForceIfSame)
 {
-	if (BoxStatus.IsSet() && BoxStatus.Get() == NewStatus)
+	if (!bInForceIfSame && BoxStatus == NewStatus)
 	{
 		return;
 	}

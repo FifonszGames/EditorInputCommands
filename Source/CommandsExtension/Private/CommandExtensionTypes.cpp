@@ -4,7 +4,6 @@
 #include "CommandExtensionTypes.h"
 
 #include "CommandsExtension.h"
-#include "CommandsExtensionLibrary.h"
 #include "EditorInputCommand.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
 
@@ -13,63 +12,14 @@ TSharedPtr<FBindingContext> FBindingContextProvider::AsContext() const
 	return FInputBindingManager::Get().GetContextByName(GetBindingContextName());
 }
 
-FNewContextBinding::FNewContextBinding(const FName BindingContextName, const FText& InContextDescription) : BindingContextName(BindingContextName), ContextDescription(InContextDescription)
-{
-	CreateContext();
-}
-
-FNewContextBinding::~FNewContextBinding()
-{
-	if (Context.IsValid())
-	{
-		FInputBindingManager::Get().RemoveContextByName(Context->GetContextName());
-		Context.Reset();
-	}
-}
-
-TSharedPtr<FBindingContext> FNewContextBinding::AsContext() const
-{
-	CreateContext();
-	return Context;
-}
-
-void FNewContextBinding::CreateContext() const
-{
-	if (Context.IsValid())
-	{
-		if (Context->GetContextName().IsEqual(BindingContextName))
-		{
-			return;
-		}
-		FInputBindingManager::Get().RemoveContextByName(Context->GetContextName());
-		Context.Reset();
-	}
-	if (!ContextDescription.IsEmpty() && !BindingContextName.IsNone() && !UCommandsExtensionLibrary::GetBindingContextNames().Contains(BindingContextName))
-	{
-		Context = MakeShareable(new FBindingContext(BindingContextName,
-		ContextDescription,
-			NAME_None,
-			FEditorCommandStyle::Get().GetStyleSetName()));
-	}
-}
-
-FInputCommandRegisterData::FInputCommandRegisterData() : ContextProvider(FInstancedStruct(Cast<UScriptStruct>(FExistingContextBinding::StaticStruct())))
-{
-}
-
 bool FInputCommandRegisterData::IsValid() const
 {
-	if (const FBindingContextProvider* Provider = ContextProvider.GetPtr<FBindingContextProvider>())
-	{
-		return Provider->IsValid() && !Identifier.IsNone() && !Label.IsEmpty() && !Description.IsEmpty();	
-	}
-	return false;
+	return ContextProvider.IsValid() && !Identifier.IsNone() && !Label.IsEmpty() && !Description.IsEmpty();	
 }
 
 TSharedPtr<FBindingContext> FInputCommandRegisterData::GetContext() const
 {
-	const FBindingContextProvider* Provider = ContextProvider.GetPtr<FBindingContextProvider>();
-	return Provider ? Provider->AsContext() : nullptr;
+	return ContextProvider.AsContext();
 }
 
 FCommandIdentifier FInputCommandRegisterData::GetIdentifier() const
@@ -83,13 +33,7 @@ FSlateIcon FInputCommandRegisterData::GetIcon()
 		FEditorCommandStyle::GetClassIconStyleSetName<UEditorInputCommand>());
 }
 
-FCommandIdentifier::FCommandIdentifier(const FInputCommandRegisterData& Data) : Identifier(Data.Identifier)
-{
-	if (const FBindingContextProvider* Provider = Data.ContextProvider.GetPtr<FBindingContextProvider>())
-	{
-		BindingContext = Provider->GetBindingContextName();
-	}
-}
+FCommandIdentifier::FCommandIdentifier(const FInputCommandRegisterData& Data) : Identifier(Data.Identifier), BindingContext(Data.ContextProvider.GetBindingContextName()) {}
 
 TSharedPtr<FUICommandInfo> FCommandIdentifier::AsInfo() const
 {

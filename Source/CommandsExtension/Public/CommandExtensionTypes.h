@@ -1,7 +1,6 @@
 ﻿// Copyright FifonszGames. All Rights Reserved.
 
 #pragma once
-#include "StructUtils/InstancedStruct.h"
 
 #include "CommandExtensionTypes.generated.h"
 
@@ -18,39 +17,18 @@ struct FBindingContextProvider
 	virtual TSharedPtr<FBindingContext> AsContext() const;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, meta = (HasNativeMake = "CommandsExtensionLibrary.MakeCommandIdentifier"))
 struct FExistingContextBinding : public FBindingContextProvider
 {
 	GENERATED_BODY()
-	
+	explicit FExistingContextBinding() = default;
+	explicit FExistingContextBinding(const FName InBindingContextName) : BindingContextName(InBindingContextName) {}
+
 	virtual FName GetBindingContextName() const override { return BindingContextName; }
 
 protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetBindingContextNames"))
 	FName BindingContextName;
-};
-
-USTRUCT(BlueprintType, meta = (HasNativeMake = "CommandsExtensionLibrary.MakeNewContextBinding"))
-struct FNewContextBinding : public FBindingContextProvider
-{
-	GENERATED_BODY()
-	explicit FNewContextBinding() = default;
-	explicit FNewContextBinding(const FName BindingContextName, const FText& InContextDescription);
-	virtual ~FNewContextBinding() override;
-
-	virtual FName GetBindingContextName() const override { return BindingContextName; }
-	virtual TSharedPtr<FBindingContext> AsContext() const override;
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FName BindingContextName;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	FText ContextDescription;
-
-private:
-	void CreateContext() const;
-	
-	mutable TSharedPtr<FBindingContext> Context;
 };
 
 UENUM(BlueprintType)
@@ -66,8 +44,6 @@ USTRUCT(BlueprintType)
 struct FInputCommandRegisterData
 {
 	GENERATED_BODY()
-
-	explicit FInputCommandRegisterData();
 	
 	bool IsValid() const;
 	
@@ -76,8 +52,8 @@ struct FInputCommandRegisterData
 
 	static FSlateIcon GetIcon();
 
-	UPROPERTY(EditAnywhere, NoClear, meta = (ExcludeBaseStruct, BaseStruct="/Script/CommandsExtension.BindingContextProvider"))
-	FInstancedStruct ContextProvider;
+	UPROPERTY(EditAnywhere, meta=(ShowOnlyInnerProperties))
+	FExistingContextBinding ContextProvider;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Identifier;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

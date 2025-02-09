@@ -15,8 +15,6 @@ class UEditorInputCommand : public UEditorUtilityObject
 	GENERATED_BODY()
 
 public:
-	virtual bool IsEditorOnly() const override final { return true; }
-	
 	void RegisterCommand();
 	void UnregisterCommand();
 
@@ -29,14 +27,14 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Registration")
 	FInputCommandRegisterData RegistrationData;
-	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Registration", NoClear)
+	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Registration", NoClear, meta=(ShowOnlyInnerProperties, NoResetToDefault))
 	FCommandIdentifier CurrentIdentifier;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Mapping")
 	FCommandListIdentifier TargetList;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Mapping")
 	ECommandRepeatMode RepeatMode = ECommandRepeatMode::Disabled;
-	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Mapping", NoClear, meta=(ShowOnlyInnerProperties))
+	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Mapping", NoClear, meta=(ShowOnlyInnerProperties, NoResetToDefault))
 	TSet<FCommandListIdentifier> MappedLists;
 
 private:

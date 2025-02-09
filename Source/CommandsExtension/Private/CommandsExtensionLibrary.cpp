@@ -133,9 +133,9 @@ FCommandIdentifier UCommandsExtensionLibrary::MakeCommandIdentifier(const FName 
 	return FCommandIdentifier(BindingContext, Identifier);
 }
 
-FNewContextBinding UCommandsExtensionLibrary::MakeNewContextBinding(const FName ContextBindingName, const FText& ContextDescription)
+FExistingContextBinding UCommandsExtensionLibrary::MakeExistingContextBinding(const FName BindingContextName)
 {
-	return FNewContextBinding(ContextBindingName, ContextDescription);
+	return FExistingContextBinding(BindingContextName);
 }
 
 TArray<FName> UCommandsExtensionLibrary::GetBindingContextNames()

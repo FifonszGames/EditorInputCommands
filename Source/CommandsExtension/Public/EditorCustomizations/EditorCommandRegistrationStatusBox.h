@@ -14,7 +14,7 @@ public:
 	SLATE_END_ARGS()
 
 	void Construct(const FArguments& InArgs);
-	void RefreshState();
+	void RefreshState(const bool bInForceIfSame = false);
 
 protected:
 	virtual FText GetStatusText(EStatusBoxState ForStatus) const override;

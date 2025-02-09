@@ -12,7 +12,6 @@
 	SLATE_ARGUMENT(FMargin, Padding) \
 	SLATE_ARGUMENT(FVector2D, IconSize) \
 	SLATE_ARGUMENT(bool, AutoWrapText) \
-	SLATE_ATTRIBUTE(EStatusBoxState, BoxStatus) \
 	SLATE_DEFAULT_SLOT(FArguments, Content)
 
 enum class EStatusBoxState : uint8
@@ -30,7 +29,7 @@ public:
 
 	void Construct(const FArguments& InArgs);
 	
-	void SetStatus(EStatusBoxState NewStatus);
+	void SetStatus(EStatusBoxState NewStatus, bool bInForceIfSame);
 
 protected:
 	virtual void OnStatusChanged(EStatusBoxState NewStatus);
@@ -43,6 +42,6 @@ protected:
 	TSharedPtr<SImage> StatusImage;
 	
 private:
-	TAttribute<EStatusBoxState> BoxStatus;
+	EStatusBoxState BoxStatus = EStatusBoxState::Error;
 	FSlateBrush BorderBrush;
 };

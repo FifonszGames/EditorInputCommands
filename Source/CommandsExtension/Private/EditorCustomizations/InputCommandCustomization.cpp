@@ -41,80 +41,79 @@ TSharedRef<IDetailCustomization> FInputCommandCustomization::MakeInstance()
 }
 
 void FInputCommandCustomization::CustomizeDetails(IDetailLayoutBuilder& InDetailLayout)
+{
+	TArray<TWeakObjectPtr<UEditorInputCommand>> SelectedObjects = InDetailLayout.GetObjectsOfTypeBeingCustomized<UEditorInputCommand>();
+	if (SelectedObjects.Num() != 1)
 	{
-		const TArray<TWeakObjectPtr<UObject>>& SelectedObjects = InDetailLayout.GetSelectedObjects();
-		if (SelectedObjects.Num() != 1)
-		{
-			return;
-		}
-		IDetailsView* DetailsView = InDetailLayout.GetDetailsView();
-		check(DetailsView);
-		DetailsView->OnFinishedChangingProperties().AddRaw(this, &FInputCommandCustomization::OnFinishChangingProperties);
+		return;
+	}
+	IDetailsView* DetailsView = InDetailLayout.GetDetailsView();
+	check(DetailsView);
+	DetailsView->OnFinishedChangingProperties().AddSP(this, &FInputCommandCustomization::OnFinishChangingProperties);
+	Utilities = InDetailLayout.GetPropertyUtilities();
+	Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
 	
-		Utilities = InDetailLayout.GetPropertyUtilities();
-	
-		Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
-		const FMargin BoxPadding(0.f, 16.f, 0.f, 0.f);
+	const FMargin BoxPadding(0.f, 16.f, 0.f, 0.f);
 		
-		const FName RegistrationCategoryName = TEXT("Registration");
-		IDetailCategoryBuilder& CategoryBuilder = InDetailLayout.EditCategory(RegistrationCategoryName);
-		CategoryBuilder.AddCustomRow(FText::FromName(RegistrationCategoryName))
+	const FName RegistrationCategoryName = TEXT("Registration");
+	IDetailCategoryBuilder& CategoryBuilder = InDetailLayout.EditCategory(RegistrationCategoryName);
+	CategoryBuilder.AddCustomRow(FText::FromName(RegistrationCategoryName))
+	[
+		SNew(SVerticalBox)
+		+SVerticalBox::Slot()
+		.AutoHeight()
 		[
-			SNew(SVerticalBox)
-			+SVerticalBox::Slot()
-			.AutoHeight()
+			SAssignNew(RegistrationStatusBox, SEditorCommandRegistrationStatusBox)
+			.TargetCommand(Target)
+		]
+		+SVerticalBox::Slot()
+		.Padding(BoxPadding)
+		[
+			SNew(SHorizontalBox)
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
 			[
-				SAssignNew(RegistrationStatusBox, SEditorCommandRegistrationStatusBox)
-				.TargetCommand(Target)
+				CreateButton(STRING_TO_TEXT("Register Command"), [](UEditorInputCommand& Command) { Command.RegisterCommand(); },
+				[](const UEditorInputCommand& Command) { return Command.RegistrationData.IsValid() &&
+					(Command.RegistrationData.GetIdentifier() != Command.CurrentIdentifier || !Command.CurrentIdentifier.IsRegistered()); })
 			]
-			+SVerticalBox::Slot()
-			.Padding(BoxPadding)
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
 			[
-				SNew(SHorizontalBox)
-				+SHorizontalBox::Slot()
-				.HAlign(HAlign_Left)
-				[
-					CreateButton(STRING_TO_TEXT("Register Command"), [](UEditorInputCommand& Command) { Command.RegisterCommand(); },
-					             [](const UEditorInputCommand& Command) { return Command.RegistrationData.IsValid() &&
-						             (Command.RegistrationData.GetIdentifier() != Command.CurrentIdentifier || !Command.CurrentIdentifier.IsRegistered()); })
-				]
-				+SHorizontalBox::Slot()
-				.HAlign(HAlign_Left)
-				[
-					CreateButton(STRING_TO_TEXT("Unregister Command"), [](UEditorInputCommand& Command) { Command.UnregisterCommand(); },
+				CreateButton(STRING_TO_TEXT("Unregister Command"), [](UEditorInputCommand& Command) { Command.UnregisterCommand(); },
 					             [](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered(); })
-				]	
-			]
-		];
+			]	
+		]
+	];
 
-		const FName MappingCategoryName = TEXT("Mapping");
-		IDetailCategoryBuilder& MappingBuilder = InDetailLayout.EditCategory(MappingCategoryName);
-		MappingBuilder.AddCustomRow(FText::FromName(MappingCategoryName))
+	const FName MappingCategoryName = TEXT("Mapping");
+	IDetailCategoryBuilder& MappingBuilder = InDetailLayout.EditCategory(MappingCategoryName);
+	MappingBuilder.AddCustomRow(FText::FromName(MappingCategoryName))
+	[
+		SNew(SVerticalBox)
+		+SVerticalBox::Slot()
+		.AutoHeight()
 		[
-			SNew(SVerticalBox)
-			+SVerticalBox::Slot()
-			.AutoHeight()
+			SAssignNew(MappingStatusBox, SEditorCommandMappingStatusBox)
+			.TargetCommand(Target)
+		]
+		+SVerticalBox::Slot()
+		.Padding(BoxPadding)
+		[
+			SNew(SHorizontalBox)
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
 			[
-				SAssignNew(MappingStatusBox, SEditorCommandMappingStatusBox)
-				.TargetCommand(Target)
+				CreateButton(STRING_TO_TEXT("Map to selected list"), [](UEditorInputCommand& Command) { Command.MapToTargetList(); },
+				[](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered() && !Command.MappedLists.Contains(Command.TargetList); })
 			]
-			+SVerticalBox::Slot()
-			.Padding(BoxPadding)
+			+SHorizontalBox::Slot()
+			.HAlign(HAlign_Left)
 			[
-				SNew(SHorizontalBox)
-				+SHorizontalBox::Slot()
-				.HAlign(HAlign_Left)
-				[
-					CreateButton(STRING_TO_TEXT("Map to selected list"), [](UEditorInputCommand& Command) { Command.MapToTargetList(); },
-					             [](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered() && !Command.MappedLists.Contains(Command.TargetList); })
-					]
-				+SHorizontalBox::Slot()
-				.HAlign(HAlign_Left)
-				[
-					CreateButton(STRING_TO_TEXT("Unmap from selected list"), [](UEditorInputCommand& Command) { Command.UnmapFromTargetList(); },
-					             [](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered() && Command.MappedLists.Contains(Command.TargetList); })
-				]
+				CreateButton(STRING_TO_TEXT("Unmap from selected list"), [](UEditorInputCommand& Command) { Command.UnmapFromTargetList(); },
+				[](const UEditorInputCommand& Command) { return Command.CurrentIdentifier.IsRegistered() && Command.MappedLists.Contains(Command.TargetList); })
 			]
+		]
 	];
 }
 
@@ -132,7 +131,10 @@ void FInputCommandCustomization::OnFinishChangingProperties(const FPropertyChang
 	{
 		for (const auto& [Button, Callback] : ButtonsMap)
 		{
-			Button->SetEnabled(Callback(*Command));
+			if (Button.IsValid())
+			{
+				Button->SetEnabled(Callback(*Command));
+			}
 		}
 	}
 }
