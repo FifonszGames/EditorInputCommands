@@ -50,13 +50,13 @@ FText SEditorCommandRegistrationStatusBox::GetStatusText(EStatusBoxState ForStat
 	switch (ForStatus)
 	{
 		case EStatusBoxState::Success:
-			return TextFromString("Command is registered");
+			return STRING_TO_TEXT("Command is registered");
 		case EStatusBoxState::Warning:
 			return FText::FromString(FString::Printf(TEXT("%s's identification info differs from %s"),
 				GET_MEMBER_NAME_STRING_CHECKED(UEditorInputCommand, RegistrationData),
 				GET_MEMBER_NAME_STRING_CHECKED(UEditorInputCommand, CurrentIdentifier)));
 		default:
-			return TextFromString("Command is not registered");
+			return STRING_TO_TEXT("Command is not registered");
 	}
 
 }

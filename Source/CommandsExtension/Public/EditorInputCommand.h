@@ -29,14 +29,14 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Registration")
 	FInputCommandRegisterData RegistrationData;
-	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Registration")
+	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Registration", NoClear)
 	FCommandIdentifier CurrentIdentifier;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Mapping")
 	FCommandListIdentifier TargetList;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Mapping")
 	ECommandRepeatMode RepeatMode = ECommandRepeatMode::Disabled;
-	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Mapping", meta=(ShowOnlyInnerProperties))
+	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Mapping", NoClear, meta=(ShowOnlyInnerProperties))
 	TSet<FCommandListIdentifier> MappedLists;
 
 private:
@@ -47,4 +47,5 @@ private:
 	
 	friend class FInputCommandCustomization;
 	friend class SEditorCommandRegistrationStatusBox;
+	friend class SEditorCommandMappingStatusBox;
 };
