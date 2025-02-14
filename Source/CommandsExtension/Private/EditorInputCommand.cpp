@@ -4,6 +4,7 @@
 #include "EditorInputCommand.h"
 
 #include "CommandsExtensionLibrary.h"
+#include "EditorUtilityObject.h"
 
 void UEditorInputCommand::RegisterCommand()
 {
@@ -16,10 +17,6 @@ void UEditorInputCommand::RegisterCommand()
 		case ERegistrationResult::Success:
 			{
 				CurrentIdentifier = RegistrationData.GetIdentifier();
-				if (!ExecuteDelegate.IsBound())
-				{
-					ExecuteDelegate.BindDynamic(this, &UEditorInputCommand::ExecuteCommand);
-				}
 				MapToTargetList();
 			}
 			break;
@@ -36,7 +33,7 @@ void UEditorInputCommand::UnregisterCommand()
 		for (const FCommandListIdentifier& Identifier : MappedLists)
 		{
 			UCommandsExtensionLibrary::UnmapAction(Identifier, CurrentIdentifier, ExecuteDelegate);	
-		} 
+		}
 		UCommandsExtensionLibrary::UnregisterInputCommand(CurrentIdentifier);
 	}
 	CurrentIdentifier = FCommandIdentifier();
@@ -48,7 +45,11 @@ void UEditorInputCommand::MapToTargetList()
 	if (TargetList.IsValid() && CurrentIdentifier.IsRegistered())
 	{
 		UnmapFromTargetList();
-		
+
+		if (!ExecuteDelegate.IsBound())
+		{
+			ExecuteDelegate.BindDynamic(this, &UEditorInputCommand::ExecuteCommand);
+		}
 		if (UCommandsExtensionLibrary::MapAction(TargetList, CurrentIdentifier, ExecuteDelegate, RepeatMode))
 		{
 			MappedLists.Add(TargetList);
@@ -67,6 +68,12 @@ void UEditorInputCommand::UnmapFromTargetList()
 
 void UEditorInputCommand::ExecuteCommand()
 {
-	Run();
+	// for (const auto& EditorUtilityObject : RunnableObjects)
+	// {
+	// 	if (UEditorUtilityObject* UtilityObject = EditorUtilityObject.LoadSynchronous())
+	// 	{
+	// 		UtilityObject->Run();
+	// 	}
+	// } 
 	OnInputCommandExecuted.Broadcast();
 }

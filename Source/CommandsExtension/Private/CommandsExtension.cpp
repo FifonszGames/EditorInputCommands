@@ -74,6 +74,10 @@ void FCommandsExtensionModule::OnRegisterCommandList(const FName ContextName, TS
 	{
 		CommandLists.Add(ContextName, CommandList);
 	}
+	else
+	{
+		CommandLists[ContextName] = CommandList;
+	}
 }
 
 void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList)

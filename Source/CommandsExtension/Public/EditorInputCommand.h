@@ -3,14 +3,16 @@
 #pragma once
 
 #include "CommandExtensionSubsystem.h"
-#include "EditorUtilityObject.h"
+#include "Engine/DataAsset.h"
 #include "CommandExtensionTypes.h"
 #include "EditorInputCommand.generated.h"
 
+class UEditorUtilityObject;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputCommandExecuted);
 
-UCLASS(Abstract)
-class UEditorInputCommand : public UEditorUtilityObject
+UCLASS()
+class UEditorInputCommand : public UDataAsset
 {
 	GENERATED_BODY()
 
@@ -20,6 +22,8 @@ public:
 
 	void MapToTargetList();
 	void UnmapFromTargetList();
+
+	//TODO: handle unregistering when asset is destroyed
 
 	UPROPERTY(BlueprintAssignable, Transient)
 	FOnInputCommandExecuted OnInputCommandExecuted;
@@ -37,10 +41,14 @@ protected:
 	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Mapping", NoClear, meta=(ShowOnlyInnerProperties, NoResetToDefault))
 	TSet<FCommandListIdentifier> MappedLists;
 
+	UPROPERTY(EditDefaultsOnly)
+	TSet<TSoftClassPtr<UEditorUtilityObject>> RunnableObjects;
+
 private:
 	UFUNCTION()
 	void ExecuteCommand();
-	
+
+	UPROPERTY()
 	FOnExecute ExecuteDelegate;
 	
 	friend class FInputCommandCustomization;
