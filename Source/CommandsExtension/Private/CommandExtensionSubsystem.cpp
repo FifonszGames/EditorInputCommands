@@ -61,45 +61,13 @@ void UCommandExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection
 
 void UCommandExtensionSubsystem::TryRegisterCommands(const IAssetRegistry& AssetRegistry)
 {
-	FARFilter Filter;
-	Filter.ClassPaths.Add(UEditorInputCommand::StaticClass()->GetClassPathName());
-	Filter.bRecursiveClasses = true;
-
-	//copied from UAssetRegistryHelpers::GetBlueprintAssets which is not exposed to other modules
-	TArray<FTopLevelAssetPath> BlueprintParentClassPathRoots = MoveTemp(Filter.ClassPaths);
-	TSet<FTopLevelAssetPath> BlueprintParentClassPaths;
-	if (Filter.bRecursiveClasses)
+	TArray<FAssetData> InputCommands;
+	AssetRegistry.GetAssetsByClass(UEditorInputCommand::StaticClass()->GetClassPathName(), InputCommands);
+	for (const FAssetData& AssetData : InputCommands)
 	{
-		AssetRegistry.GetDerivedClassNames(BlueprintParentClassPathRoots, TSet<FTopLevelAssetPath>(),BlueprintParentClassPaths);
-	}
-	else
-	{
-		BlueprintParentClassPaths.Append(BlueprintParentClassPathRoots);
-	}
-	Filter.ClassPaths.Reset(1);
-	Filter.ClassPaths.Add(FTopLevelAssetPath(FName(TEXT("/Script/Engine")), FName(TEXT("BlueprintCore"))));
-	Filter.bRecursiveClasses = true;
-
-	TArray<FAssetData> AssetDatas;
-	auto FilterLambda = [&AssetDatas, &BlueprintParentClassPaths](const FAssetData& AssetData)
-	{
-		if (BlueprintParentClassPaths.IsEmpty() || UAssetRegistryHelpers::IsAssetDataBlueprintOfClassSet(AssetData, BlueprintParentClassPaths))
+		if (UEditorInputCommand* Command = Cast<UEditorInputCommand>(AssetData.GetAsset()))
 		{
-			AssetDatas.Add(AssetData);
-		}
-		return true;
-	};
-	
-	AssetRegistry.EnumerateAssets(Filter, FilterLambda, UE::AssetRegistry::EEnumerateAssetsFlags::None);
-	
-	for (const FAssetData& AssetData : AssetDatas)
-	{
-		if (const UBlueprintCore* Blueprint = Cast<UBlueprintCore>(AssetData.GetAsset()))
-		{
-			if (UEditorInputCommand* Command = Blueprint->GeneratedClass ? Blueprint->GeneratedClass->GetDefaultObject<UEditorInputCommand>() : nullptr)
-			{
-				Command->RegisterCommand();
-			}	
+			Command->RegisterCommand();
 		}
 	}
 }
