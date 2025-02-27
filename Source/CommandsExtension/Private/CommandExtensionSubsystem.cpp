@@ -61,10 +61,30 @@ void UCommandExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection
 	}
 }
 
+void UCommandExtensionSubsystem::Deinitialize()
+{
+	FInputBindingManager& Manager = FInputBindingManager::Get();
+	Manager.OnRegisterCommandList.RemoveAll(this);
+	Super::Deinitialize();
+}
+
 void UCommandExtensionSubsystem::TryRegisterCommands()
 {
 	ForeachCommand([](UEditorInputCommand& Command){ Command.RegisterCommand(); });
-	bCommandsRegistered = true;
+	FInputBindingManager& Manager = FInputBindingManager::Get();
+	Manager.OnRegisterCommandList.AddUObject(this, &UCommandExtensionSubsystem::OnCommandListRegistered);
+}
+
+void UCommandExtensionSubsystem::OnCommandListRegistered(FName CommandListName, TSharedRef<FUICommandList> CommandList)
+{
+	ForeachCommand([&CommandListName](UEditorInputCommand& Command)
+	{
+		if (Command.GetCommandListIdentifier() == CommandListName)
+		{
+			//TODO:: this will do a lot more work than needed, fix so that it only adds binding for new list
+			Command.MapToTargetList();
+		}
+	});
 }
 
 void UCommandExtensionSubsystem::ForeachCommand(const TFunctionRef<void(UEditorInputCommand& Command)>& Func)

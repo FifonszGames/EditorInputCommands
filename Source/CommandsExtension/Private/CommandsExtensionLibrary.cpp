@@ -74,9 +74,10 @@ bool UCommandsExtensionLibrary::MapAction(const FCommandListIdentifier& TargetLi
 	{
 		if (UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>())
 		{
-			return TargetList.ForeachCommandList([&CommandInfo, Subsystem, &OnExecute](const TSharedRef<FUICommandList>& List)
+			const EUIActionRepeatMode Mode = CMDUtils::Convert(RepeatMode);
+			return TargetList.ForeachCommandList([&CommandInfo, Subsystem, &OnExecute, Mode](const TSharedRef<FUICommandList>& List)
 			{
-				return Subsystem->MapAction(List, CommandInfo.ToSharedRef(), OnExecute);
+				return Subsystem->MapAction(List, CommandInfo.ToSharedRef(), OnExecute, Mode);
 			});
 		}
 	}

@@ -23,6 +23,8 @@ public:
 	void MapToTargetList();
 	void UnmapFromTargetList();
 
+	const FCommandListIdentifier& GetCommandListIdentifier() const { return TargetList; }
+
 	//TODO: handle unregistering when asset is destroyed
 
 	UPROPERTY(BlueprintAssignable, Transient)

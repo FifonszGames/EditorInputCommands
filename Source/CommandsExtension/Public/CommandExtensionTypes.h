@@ -108,6 +108,9 @@ struct FCommandListIdentifier
 
 	bool operator==(const FCommandListIdentifier& Other) const { return Identifier == Other.Identifier; }
 	bool operator!=(const FCommandListIdentifier& Other) const { return !(*this == Other); }
+	
+	bool operator==(const FName& Other) const { return Identifier == Other; }
+	bool operator!=(const FName& Other) const { return !(*this == Other); }
 
 	bool ForeachCommandList(const TFunctionRef<bool(const TSharedRef<FUICommandList>& List)>& InFunc) const;
 	bool IsValid() const;
