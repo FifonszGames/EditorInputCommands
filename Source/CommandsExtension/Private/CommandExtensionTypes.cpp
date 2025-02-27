@@ -5,6 +5,7 @@
 
 #include "CommandsExtension.h"
 #include "EditorInputCommand.h"
+#include "Algo/AnyOf.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
 
 TSharedPtr<FBindingContext> FBindingContextProvider::AsContext() const
@@ -60,13 +61,35 @@ bool FCommandIdentifier::GetUserDefinedChord(const EMultipleKeyBindingIndex InCh
 	return FInputBindingManager::Get().GetUserDefinedChord(BindingContext, Identifier, InChordIndex, OutChord);
 }
 
-TWeakPtr<FUICommandList> FCommandListIdentifier::AsCommandList() const
+bool FCommandListIdentifier::ForeachCommandList(const TFunctionRef<bool(const TSharedRef<FUICommandList>& List)>& InFunc) const
+{
+	bool bAtleastOneSucceded = false;
+	if (const TArray<TWeakPtr<FUICommandList>>* ListsArray = GetRelatedCommandLists())
+	{
+		for (const TWeakPtr<FUICommandList>& WeakList : *ListsArray)
+		{
+			if (WeakList.IsValid())
+			{
+				bAtleastOneSucceded |= InFunc(WeakList.Pin().ToSharedRef());
+			}
+		}
+	}
+	return bAtleastOneSucceded;
+}
+
+const TArray<TWeakPtr<FUICommandList>>* FCommandListIdentifier::GetRelatedCommandLists() const
 {
 	const FCommandsExtensionModule& Module = FModuleManager::GetModuleChecked<FCommandsExtensionModule>(FCommandsExtensionModule::GetModuleName());
-	return Module.GetCommandListForContext(Identifier);
+	return Module.GetCommandListsForContext(Identifier);
 }
 
 bool FCommandListIdentifier::IsValid() const
 {
-	return !Identifier.IsNone() && AsCommandList().IsValid();
+	return !Identifier.IsNone() && HasValidCommandList();
+}
+
+bool FCommandListIdentifier::HasValidCommandList() const
+{
+	const TArray<TWeakPtr<FUICommandList>>* ListsArray = GetRelatedCommandLists();
+	return ListsArray && Algo::AnyOf(*ListsArray, [](const TWeakPtr<FUICommandList>& WeakList) { return WeakList.IsValid(); });
 }

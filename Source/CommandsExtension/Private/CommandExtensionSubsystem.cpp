@@ -4,7 +4,6 @@
 #include "CommandExtensionSubsystem.h"
 
 #include "EditorInputCommand.h"
-#include "AssetRegistry/AssetRegistryHelpers.h"
 #include "AssetRegistry/IAssetRegistry.h"
 
 
@@ -14,13 +13,16 @@ bool UCommandExtensionSubsystem::MapAction(const TSharedRef<FUICommandList>& Lis
 	if (!Multicast)
 	{
 		Multicast = &BindMap.Add(List);
-		List->MapAction(CommandInfo, FExecuteAction::CreateWeakLambda(this, [Multicast]
+		if (!List->IsActionMapped(CommandInfo))
 		{
-			if (Multicast)
+			List->MapAction(CommandInfo, FExecuteAction::CreateWeakLambda(this, [Multicast]
 			{
-				Multicast->Broadcast();
-			}
-		}), RepeatMode);
+				if (Multicast)
+				{
+					Multicast->Broadcast();
+				}
+			}), RepeatMode);
+		}
 	}
 	Multicast->AddUnique(Func);
 	return true;
@@ -55,27 +57,34 @@ void UCommandExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection
 	}
 	else
 	{
-		TryRegisterCommands(AssetRegistry);
+		TryRegisterCommands();
 	}
 }
 
-void UCommandExtensionSubsystem::TryRegisterCommands(const IAssetRegistry& AssetRegistry)
+void UCommandExtensionSubsystem::TryRegisterCommands()
 {
+	ForeachCommand([](UEditorInputCommand& Command){ Command.RegisterCommand(); });
+	bCommandsRegistered = true;
+}
+
+void UCommandExtensionSubsystem::ForeachCommand(const TFunctionRef<void(UEditorInputCommand& Command)>& Func)
+{
+	IAssetRegistry& AssetRegistry = IAssetRegistry::GetChecked();
+	
 	TArray<FAssetData> InputCommands;
 	AssetRegistry.GetAssetsByClass(UEditorInputCommand::StaticClass()->GetClassPathName(), InputCommands);
 	for (const FAssetData& AssetData : InputCommands)
 	{
 		if (UEditorInputCommand* Command = Cast<UEditorInputCommand>(AssetData.GetAsset()))
 		{
-			Command->RegisterCommand();
+			Func(*Command);
 		}
 	}
 }
 
-void UCommandExtensionSubsystem::OnFilesLoaded() const
+void UCommandExtensionSubsystem::OnFilesLoaded()
 {
 	IAssetRegistry& AssetRegistry = IAssetRegistry::GetChecked();
 	AssetRegistry.OnFilesLoaded().RemoveAll(this);
-	
-	TryRegisterCommands(AssetRegistry);
+	TryRegisterCommands();
 }

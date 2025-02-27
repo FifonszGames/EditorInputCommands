@@ -69,14 +69,15 @@ bool UCommandsExtensionLibrary::UnregisterInputCommand(const FCommandIdentifier&
 
 bool UCommandsExtensionLibrary::MapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier, FOnExecute OnExecute, ECommandRepeatMode RepeatMode)
 {
-	TWeakPtr<FUICommandList> List = TargetList.AsCommandList();
-	if (List.IsValid())
+	TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
+	if (CommandInfo.IsValid())
 	{
-		TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
-		if (CommandInfo.IsValid())
+		if (UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>())
 		{
-			UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>();
-			return Subsystem && Subsystem->MapAction(List.Pin().ToSharedRef(), CommandInfo.ToSharedRef(), OnExecute, CMDUtils::Convert(RepeatMode));
+			return TargetList.ForeachCommandList([&CommandInfo, Subsystem, &OnExecute](const TSharedRef<FUICommandList>& List)
+			{
+				return Subsystem->MapAction(List, CommandInfo.ToSharedRef(), OnExecute);
+			});
 		}
 	}
 	return false;
@@ -94,14 +95,15 @@ bool UCommandsExtensionLibrary::MapActionToCommand(TSubclassOf<UEditorInputComma
 
 bool UCommandsExtensionLibrary::UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier, FOnExecute OnExecute)
 {
-	TWeakPtr<FUICommandList> List = TargetList.AsCommandList();
-	if (List.IsValid())
+	TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
+	if (CommandInfo.IsValid())
 	{
-		TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
-		if (CommandInfo.IsValid())
+		if (UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>())
 		{
-			UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>();
-			return Subsystem && Subsystem->UnMapAction(List.Pin().ToSharedRef(), CommandInfo.ToSharedRef(), OnExecute);
+			TargetList.ForeachCommandList([&CommandInfo, Subsystem, &OnExecute](const TSharedRef<FUICommandList>& List)
+			{
+				return Subsystem->UnMapAction(List, CommandInfo.ToSharedRef(), OnExecute);
+			});
 		}
 	}
 	return false;

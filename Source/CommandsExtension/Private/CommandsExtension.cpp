@@ -50,10 +50,9 @@ void FCommandsExtensionModule::ShutdownModule()
 	FEditorCommandStyle::Shutdown();
 }
 
-TWeakPtr<FUICommandList> FCommandsExtensionModule::GetCommandListForContext(const FName& ContextName) const
+const TArray<TWeakPtr<FUICommandList>>* FCommandsExtensionModule::GetCommandListsForContext(const FName& ContextName) const
 {
-	const TWeakPtr<FUICommandList>* WeakPtr = CommandLists.Find(ContextName);
-	return WeakPtr ? *WeakPtr : TWeakPtr<FUICommandList>();
+	return CommandLists.Find(ContextName);
 }
 
 TArray<FName> FCommandsExtensionModule::GetAvailableContexts() const
@@ -70,21 +69,15 @@ FName FCommandsExtensionModule::GetModuleName()
 
 void FCommandsExtensionModule::OnRegisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList)
 {
-	if (!CommandLists.Contains(ContextName))
-	{
-		CommandLists.Add(ContextName, CommandList);
-	}
-	else
-	{
-		CommandLists[ContextName] = CommandList;
-	}
+	TArray<TWeakPtr<FUICommandList>>& List = CommandLists.FindOrAdd(ContextName);
+	List.AddUnique(CommandList);
 }
 
 void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList)
 {
-	if (CommandLists.Contains(ContextName))
+	if (TArray<TWeakPtr<FUICommandList>>* ListArray = CommandLists.Find(ContextName))
 	{
-		CommandLists.Remove(ContextName);
+		ListArray->Remove(CommandList);
 	}
 }
 

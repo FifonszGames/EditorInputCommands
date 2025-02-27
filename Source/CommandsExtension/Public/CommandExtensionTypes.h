@@ -109,10 +109,13 @@ struct FCommandListIdentifier
 	bool operator==(const FCommandListIdentifier& Other) const { return Identifier == Other.Identifier; }
 	bool operator!=(const FCommandListIdentifier& Other) const { return !(*this == Other); }
 
-	TWeakPtr<FUICommandList> AsCommandList() const;
+	bool ForeachCommandList(const TFunctionRef<bool(const TSharedRef<FUICommandList>& List)>& InFunc) const;
 	bool IsValid() const;
 	
 protected:
+	const TArray<TWeakPtr<FUICommandList>>* GetRelatedCommandLists() const;
+	bool HasValidCommandList() const;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetCommandListIdentifiers"))
 	FName Identifier;
 };

@@ -12,7 +12,7 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
-	TWeakPtr<FUICommandList> GetCommandListForContext(const FName& ContextName) const;
+	const TArray<TWeakPtr<FUICommandList>>* GetCommandListsForContext(const FName& ContextName) const;
 	TArray<FName> GetAvailableContexts() const;
 
 	static FName GetModuleName();
@@ -21,6 +21,6 @@ private:
 	void OnRegisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList);
 	void OnUnregisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList);
 
-	TMap<FName, TWeakPtr<FUICommandList>> CommandLists;
+	TMap<FName, TArray<TWeakPtr<FUICommandList>>> CommandLists;
 	TSharedPtr<FCommandIdentifierPinFactory> IdentifierPinFactory;
 };

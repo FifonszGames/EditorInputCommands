@@ -7,6 +7,8 @@
 #include "AssetRegistry/IAssetRegistry.h"
 #include "CommandExtensionSubsystem.generated.h"
 
+class UEditorInputCommand;
+
 DECLARE_DYNAMIC_DELEGATE(FOnExecute);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnExecuteMulticast);
 
@@ -24,8 +26,10 @@ public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 
 private:
-	void OnFilesLoaded() const;
-	static void TryRegisterCommands(const IAssetRegistry& AssetRegistry);
+	void OnFilesLoaded();
+	void TryRegisterCommands();
+	static void ForeachCommand(const TFunctionRef<void(UEditorInputCommand& Command)>& Func);
 
 	TMap<TWeakPtr<FUICommandList>, FOnExecuteMulticast> BindMap;
+	bool bCommandsRegistered = false;
 };
