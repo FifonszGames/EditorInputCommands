@@ -37,13 +37,13 @@ public:
 		FOnExecute OnExecute, ECommandRepeatMode RepeatMode = ECommandRepeatMode::Disabled);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure=false)
-	static bool MapActionToCommand(TSubclassOf<UEditorInputCommand> CommandAsset, FOnExecute OnExecute);
+	static bool MapActionToCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute);
 		
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="TargetList, CommandIdentifier"))
 	static bool UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier, FOnExecute OnExecute);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure=false)
-	static bool UnmapActionFromCommand(TSubclassOf<UEditorInputCommand> CommandAsset, FOnExecute OnExecute);
+	static bool UnmapActionFromCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="CommandIdentifier"))
 	static bool GetUserDefinedCommandInputChord(const FCommandIdentifier& CommandIdentifier, const EMultipleKeyBindingIndex InChordIndex, FInputChord& OutChord);

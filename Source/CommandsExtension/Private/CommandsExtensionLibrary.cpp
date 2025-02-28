@@ -84,11 +84,11 @@ bool UCommandsExtensionLibrary::MapAction(const FCommandListIdentifier& TargetLi
 	return false;
 }
 
-bool UCommandsExtensionLibrary::MapActionToCommand(TSubclassOf<UEditorInputCommand> CommandAsset, FOnExecute OnExecute)
+bool UCommandsExtensionLibrary::MapActionToCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute)
 {
 	if (CommandAsset && OnExecute.IsBound())
 	{
-		CommandAsset->GetDefaultObject<UEditorInputCommand>()->OnInputCommandExecuted.AddUnique(OnExecute);
+		CommandAsset->OnInputCommandExecuted.AddUnique(OnExecute);
 		return true;
 	}
 	return false;
@@ -110,12 +110,11 @@ bool UCommandsExtensionLibrary::UnmapAction(const FCommandListIdentifier& Target
 	return false;
 }
 
-bool UCommandsExtensionLibrary::UnmapActionFromCommand(TSubclassOf<UEditorInputCommand> CommandAsset, FOnExecute OnExecute)
+bool UCommandsExtensionLibrary::UnmapActionFromCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute)
 {
-	UEditorInputCommand* Command = CommandAsset ? CommandAsset->GetDefaultObject<UEditorInputCommand>() : nullptr;
-	if (Command && Command->OnInputCommandExecuted.Contains(OnExecute))
+	if (CommandAsset && CommandAsset->OnInputCommandExecuted.Contains(OnExecute))
 	{
-		Command->OnInputCommandExecuted.Remove(OnExecute);
+		CommandAsset->OnInputCommandExecuted.Remove(OnExecute);
 		return true;
 	}
 	return false;
