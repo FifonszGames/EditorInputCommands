@@ -15,13 +15,7 @@ bool UCommandExtensionSubsystem::MapAction(const TSharedRef<FUICommandList>& Lis
 		Multicast = &BindMap.Add(List);
 		if (!List->IsActionMapped(CommandInfo))
 		{
-			List->MapAction(CommandInfo, FExecuteAction::CreateWeakLambda(this, [Multicast]
-			{
-				if (Multicast)
-				{
-					Multicast->Broadcast();
-				}
-			}), RepeatMode);
+			List->MapAction(CommandInfo, FExecuteAction::CreateUObject(this, &UCommandExtensionSubsystem::OnCommandExecuted, Multicast), RepeatMode);
 		}
 	}
 	Multicast->AddUnique(Func);
@@ -85,6 +79,14 @@ void UCommandExtensionSubsystem::OnCommandListRegistered(FName CommandListName, 
 			Command.MapToTargetList();
 		}
 	});
+}
+
+void UCommandExtensionSubsystem::OnCommandExecuted(FOnExecuteMulticast* Multicast)
+{
+	if (Multicast)
+	{
+		Multicast->Broadcast();
+	}	
 }
 
 void UCommandExtensionSubsystem::ForeachCommand(const TFunctionRef<void(UEditorInputCommand& Command)>& Func)

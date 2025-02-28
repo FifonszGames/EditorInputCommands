@@ -29,6 +29,8 @@ private:
 	void OnFilesLoaded();
 	void TryRegisterCommands();
 	void OnCommandListRegistered(FName CommandListName, TSharedRef<FUICommandList> CommandList);
+
+	void OnCommandExecuted(FOnExecuteMulticast* Multicast);
 	
 	static void ForeachCommand(const TFunctionRef<void(UEditorInputCommand& Command)>& Func);
 

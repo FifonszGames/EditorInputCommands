@@ -66,14 +66,23 @@ void UEditorInputCommand::UnmapFromTargetList()
 	}
 }
 
+void UEditorInputCommand::BeginDestroy()
+{
+	UnregisterCommand();
+	Super::BeginDestroy();
+}
+
 void UEditorInputCommand::ExecuteCommand()
 {
-	// for (const auto& EditorUtilityObject : RunnableObjects)
-	// {
-	// 	if (UEditorUtilityObject* UtilityObject = EditorUtilityObject.LoadSynchronous())
-	// 	{
-	// 		UtilityObject->Run();
-	// 	}
-	// } 
+	for (const auto& EditorUtilityObject : RunnableObjects)
+	{
+		if (const UClass* UtilityObjectClass = EditorUtilityObject.LoadSynchronous())
+		{
+			if (UEditorUtilityObject* Object = UtilityObjectClass->GetDefaultObject<UEditorUtilityObject>())
+			{
+				Object->Run();
+			}
+		}
+	} 
 	OnInputCommandExecuted.Broadcast();
 }

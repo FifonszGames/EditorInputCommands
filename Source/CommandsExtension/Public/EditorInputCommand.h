@@ -23,9 +23,9 @@ public:
 	void MapToTargetList();
 	void UnmapFromTargetList();
 
-	const FCommandListIdentifier& GetCommandListIdentifier() const { return TargetList; }
+	virtual void BeginDestroy() override;
 
-	//TODO: handle unregistering when asset is destroyed
+	const FCommandListIdentifier& GetCommandListIdentifier() const { return TargetList; }
 
 	UPROPERTY(BlueprintAssignable, Transient)
 	FOnInputCommandExecuted OnInputCommandExecuted;
@@ -43,7 +43,7 @@ protected:
 	UPROPERTY(VisibleAnywhere, Transient, BlueprintReadOnly, Category="Mapping", NoClear, meta=(ShowOnlyInnerProperties, NoResetToDefault))
 	TSet<FCommandListIdentifier> MappedLists;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, Category="Execution")
 	TSet<TSoftClassPtr<UEditorUtilityObject>> RunnableObjects;
 
 private:
