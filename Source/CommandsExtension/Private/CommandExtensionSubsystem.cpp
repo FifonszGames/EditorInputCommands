@@ -12,6 +12,7 @@ bool UCommandExtensionSubsystem::MapAction(const TSharedRef<FUICommandList>& Lis
 	FOnExecuteMulticast* Multicast = BindMap.Find(List);
 	if (!Multicast)
 	{
+		//TODO:: this will make it so that any command bound to the same list will always get executed no matter the input chors since we bind those to the same multicast !!
 		Multicast = &BindMap.Add(List);
 		if (!List->IsActionMapped(CommandInfo))
 		{
@@ -71,6 +72,15 @@ void UCommandExtensionSubsystem::TryRegisterCommands()
 
 void UCommandExtensionSubsystem::OnCommandListRegistered(FName CommandListName, TSharedRef<FUICommandList> CommandList)
 {
+	TArray<TWeakPtr<FUICommandList>> Keys;
+	BindMap.GenerateKeyArray(Keys);
+	for (const TWeakPtr<FUICommandList>& Key : Keys)
+	{
+		if(!Key.IsValid())
+		{
+			BindMap.Remove(Key);
+		}
+	} 
 	ForeachCommand([&CommandListName](UEditorInputCommand& Command)
 	{
 		if (Command.GetCommandListIdentifier() == CommandListName)

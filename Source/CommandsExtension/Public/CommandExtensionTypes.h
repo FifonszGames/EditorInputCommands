@@ -52,7 +52,7 @@ struct FInputCommandRegisterData
 
 	static FSlateIcon GetIcon();
 
-	UPROPERTY(EditAnywhere, meta=(ShowOnlyInnerProperties))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(ShowOnlyInnerProperties))
 	FExistingContextBinding ContextProvider;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	FName Identifier;

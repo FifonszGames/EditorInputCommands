@@ -12,17 +12,10 @@ void UEditorInputCommand::RegisterCommand()
 	
 	ERegistrationResult Result;
 	UCommandsExtensionLibrary::RegisterInputCommand(RegistrationData, Result);
-	switch (Result)
+	if (Result == ERegistrationResult::Success)
 	{
-		case ERegistrationResult::Success:
-			{
-				CurrentIdentifier = RegistrationData.GetIdentifier();
-				MapToTargetList();
-			}
-			break;
-		default:
-			//TODO:: add editor popup for fail
-			break;
+		CurrentIdentifier = RegistrationData.GetIdentifier();
+		MapToTargetList();
 	}
 }
 

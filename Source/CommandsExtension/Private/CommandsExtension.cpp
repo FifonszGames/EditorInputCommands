@@ -71,6 +71,7 @@ void FCommandsExtensionModule::OnRegisterCommandList(const FName ContextName, TS
 {
 	TArray<TWeakPtr<FUICommandList>>& List = CommandLists.FindOrAdd(ContextName);
 	List.AddUnique(CommandList);
+	List.RemoveAll([](const TWeakPtr<FUICommandList>& WeakList){ return !WeakList.IsValid(); });
 }
 
 void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList)
@@ -78,6 +79,7 @@ void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, 
 	if (TArray<TWeakPtr<FUICommandList>>* ListArray = CommandLists.Find(ContextName))
 	{
 		ListArray->Remove(CommandList);
+		ListArray->RemoveAll([](const TWeakPtr<FUICommandList>& WeakList){ return !WeakList.IsValid(); });
 	}
 }
 
