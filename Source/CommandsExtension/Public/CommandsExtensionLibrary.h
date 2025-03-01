@@ -40,7 +40,7 @@ public:
 	static bool MapActionToCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute);
 		
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="TargetList, CommandIdentifier"))
-	static bool UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier, FOnExecute OnExecute);
+	static bool UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure=false)
 	static bool UnmapActionFromCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute);

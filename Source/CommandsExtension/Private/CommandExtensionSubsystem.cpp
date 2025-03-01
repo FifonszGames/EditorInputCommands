@@ -9,35 +9,17 @@
 
 bool UCommandExtensionSubsystem::MapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo, const FOnExecute& Func, EUIActionRepeatMode RepeatMode)
 {
-	FOnExecuteMulticast* Multicast = BindMap.Find(List);
-	if (!Multicast)
+	if (List->IsActionMapped(CommandInfo))
 	{
-		//TODO:: this will make it so that any command bound to the same list will always get executed no matter the input chors since we bind those to the same multicast !!
-		Multicast = &BindMap.Add(List);
-		if (!List->IsActionMapped(CommandInfo))
-		{
-			List->MapAction(CommandInfo, FExecuteAction::CreateUObject(this, &UCommandExtensionSubsystem::OnCommandExecuted, Multicast), RepeatMode);
-		}
+		
 	}
-	Multicast->AddUnique(Func);
+	List->MapAction(CommandInfo, FExecuteAction::CreateWeakLambda(this, [Func](){ Func.ExecuteIfBound(); }), RepeatMode);
 	return true;
 }
 
-bool UCommandExtensionSubsystem::UnMapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo, const FOnExecute& Func)
+bool UCommandExtensionSubsystem::UnMapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo)
 {
-	if (FOnExecuteMulticast* Multicast = BindMap.Find(List))
-	{
-		if (Multicast->Contains(Func))
-		{
-			List->UnmapAction(CommandInfo);
-			Multicast->Remove(Func);
-			if (!Multicast->IsBound())
-			{
-				BindMap.Remove(List);
-			}
-			return true;
-		}
-	}
+	List->UnmapAction(CommandInfo);
 	return false;
 }
 
@@ -72,15 +54,6 @@ void UCommandExtensionSubsystem::TryRegisterCommands()
 
 void UCommandExtensionSubsystem::OnCommandListRegistered(FName CommandListName, TSharedRef<FUICommandList> CommandList)
 {
-	TArray<TWeakPtr<FUICommandList>> Keys;
-	BindMap.GenerateKeyArray(Keys);
-	for (const TWeakPtr<FUICommandList>& Key : Keys)
-	{
-		if(!Key.IsValid())
-		{
-			BindMap.Remove(Key);
-		}
-	} 
 	ForeachCommand([&CommandListName](UEditorInputCommand& Command)
 	{
 		if (Command.GetCommandListIdentifier() == CommandListName)
@@ -89,14 +62,6 @@ void UCommandExtensionSubsystem::OnCommandListRegistered(FName CommandListName, 
 			Command.MapToTargetList();
 		}
 	});
-}
-
-void UCommandExtensionSubsystem::OnCommandExecuted(FOnExecuteMulticast* Multicast)
-{
-	if (Multicast)
-	{
-		Multicast->Broadcast();
-	}	
 }
 
 void UCommandExtensionSubsystem::ForeachCommand(const TFunctionRef<void(UEditorInputCommand& Command)>& Func)

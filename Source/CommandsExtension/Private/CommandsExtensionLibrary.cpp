@@ -94,16 +94,16 @@ bool UCommandsExtensionLibrary::MapActionToCommand(UEditorInputCommand* CommandA
 	return false;
 }
 
-bool UCommandsExtensionLibrary::UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier, FOnExecute OnExecute)
+bool UCommandsExtensionLibrary::UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier)
 {
 	TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
 	if (CommandInfo.IsValid())
 	{
 		if (UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>())
 		{
-			TargetList.ForeachCommandList([&CommandInfo, Subsystem, &OnExecute](const TSharedRef<FUICommandList>& List)
+			TargetList.ForeachCommandList([&CommandInfo, Subsystem](const TSharedRef<FUICommandList>& List)
 			{
-				return Subsystem->UnMapAction(List, CommandInfo.ToSharedRef(), OnExecute);
+				return Subsystem->UnMapAction(List, CommandInfo.ToSharedRef());
 			});
 		}
 	}

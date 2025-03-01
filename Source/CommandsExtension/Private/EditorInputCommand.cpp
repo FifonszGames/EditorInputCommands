@@ -25,7 +25,7 @@ void UEditorInputCommand::UnregisterCommand()
 	{
 		for (const FCommandListIdentifier& Identifier : MappedLists)
 		{
-			UCommandsExtensionLibrary::UnmapAction(Identifier, CurrentIdentifier, ExecuteDelegate);	
+			UCommandsExtensionLibrary::UnmapAction(Identifier, CurrentIdentifier);	
 		}
 		UCommandsExtensionLibrary::UnregisterInputCommand(CurrentIdentifier);
 	}
@@ -54,7 +54,7 @@ void UEditorInputCommand::UnmapFromTargetList()
 {
 	if (TargetList.IsValid() && CurrentIdentifier.IsRegistered() && MappedLists.Contains(TargetList))
 	{
-		UCommandsExtensionLibrary::UnmapAction(TargetList, CurrentIdentifier, ExecuteDelegate);
+		UCommandsExtensionLibrary::UnmapAction(TargetList, CurrentIdentifier);
 		MappedLists.Remove(TargetList);
 	}
 }
