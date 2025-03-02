@@ -127,4 +127,3 @@ inline uint32 GetTypeHash(const FCommandListIdentifier& ListIdentifier)
 {
 	return GetTypeHash(ListIdentifier.Identifier);
 }
-

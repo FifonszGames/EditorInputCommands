@@ -2,6 +2,7 @@
 
 #include "CommandsExtension.h"
 
+#include "BlueprintEditorModule.h"
 #include "EdGraphUtilities.h"
 #include "EditorInputCommand.h"
 #include "EditorCustomizations/CommandIdentifierPinFactory.h"
@@ -81,6 +82,15 @@ void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, 
 		ListArray->Remove(CommandList);
 		ListArray->RemoveAll([](const TWeakPtr<FUICommandList>& WeakList){ return !WeakList.IsValid(); });
 	}
+}
+
+void FCommandsExtensionModule::TryAddUnregisteredLists()
+{
+	//ideally we don't have to manually add them but unfortunately not every module registers its own command list
+	
+	FBlueprintEditorModule& BlueprintEditorModule = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet");
+	TArray<TWeakPtr<FUICommandList>>& Lists = CommandLists.FindOrAdd(TEXT("BlueprintEditor"));
+	Lists.Add(BlueprintEditorModule.GetsSharedBlueprintEditorCommands());
 }
 
 IMPLEMENT_MODULE(FCommandsExtensionModule, CommandsExtension)

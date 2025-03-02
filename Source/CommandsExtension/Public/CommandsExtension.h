@@ -15,8 +15,9 @@ public:
 	const TArray<TWeakPtr<FUICommandList>>* GetCommandListsForContext(const FName& ContextName) const;
 	TArray<FName> GetAvailableContexts() const;
 
-	static FName GetModuleName();
+	void TryAddUnregisteredLists();
 	
+	static FName GetModuleName();
 private:
 	void OnRegisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList);
 	void OnUnregisterCommandList(const FName ContextName, TSharedRef<FUICommandList> CommandList);

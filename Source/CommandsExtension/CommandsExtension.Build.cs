@@ -28,7 +28,8 @@ public class CommandsExtension : ModuleRules
 				"BlueprintGraph",
 				"GraphEditor",
 				"ToolWidgets",
-				"Projects"
+				"Projects",
+				"Kismet"
 			});
 	}
 }

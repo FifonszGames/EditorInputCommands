@@ -3,6 +3,7 @@
 
 #include "CommandExtensionSubsystem.h"
 
+#include "CommandsExtension.h"
 #include "EditorInputCommand.h"
 #include "AssetRegistry/IAssetRegistry.h"
 
@@ -35,6 +36,9 @@ void UCommandExtensionSubsystem::OnActionExecuted(FOnExecute OnExecute)
 
 void UCommandExtensionSubsystem::TryRegisterCommands()
 {
+	FCommandsExtensionModule& Module = FModuleManager::GetModuleChecked<FCommandsExtensionModule>(FCommandsExtensionModule::GetModuleName());
+	Module.TryAddUnregisteredLists();
+	
 	ForeachCommand([](UEditorInputCommand& Command){ Command.RegisterCommand(); });
 	FInputBindingManager& Manager = FInputBindingManager::Get();
 	Manager.OnRegisterCommandList.AddUObject(this, &UCommandExtensionSubsystem::OnCommandListRegistered);
