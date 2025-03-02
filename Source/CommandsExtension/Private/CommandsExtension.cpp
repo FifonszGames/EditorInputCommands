@@ -90,7 +90,7 @@ void FCommandsExtensionModule::TryAddUnregisteredLists()
 	
 	FBlueprintEditorModule& BlueprintEditorModule = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet");
 	TArray<TWeakPtr<FUICommandList>>& Lists = CommandLists.FindOrAdd(TEXT("BlueprintEditor"));
-	Lists.Add(BlueprintEditorModule.GetsSharedBlueprintEditorCommands());
+	Lists.AddUnique(BlueprintEditorModule.GetsSharedBlueprintEditorCommands());
 }
 
 IMPLEMENT_MODULE(FCommandsExtensionModule, CommandsExtension)
