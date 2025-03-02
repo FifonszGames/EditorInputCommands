@@ -96,7 +96,7 @@ protected:
 	friend class FInputCommandIdentifierCustomization;
 };
 
-USTRUCT(BlueprintType)
+USTRUCT(BlueprintType, meta = (HasNativeMake = "CommandsExtensionLibrary.MakeCommandListIdentifier"))
 struct FCommandListIdentifier
 {
 	GENERATED_BODY()

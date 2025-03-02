@@ -2,7 +2,6 @@
 
 #include "CommandsExtensionLibrary.h"
 
-#include "CommandExtensionSubsystem.h"
 #include "CommandsExtension.h"
 #include "EditorInputCommand.h"
 
@@ -67,24 +66,26 @@ bool UCommandsExtensionLibrary::UnregisterInputCommand(const FCommandIdentifier&
 	return true;
 }
 
-bool UCommandsExtensionLibrary::MapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier, FOnExecute OnExecute, ECommandRepeatMode RepeatMode)
+bool UCommandsExtensionLibrary::MapAction(const FCommandMappingData& InMappingData, FOnExecute OnExecute, const bool bInOverrideIfAlreadyMapped, ECommandRepeatMode RepeatMode)
 {
-	TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
+	TSharedPtr<FUICommandInfo> CommandInfo = InMappingData.CommandIdentifier.AsInfo();
 	if (CommandInfo.IsValid())
 	{
-		if (UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>())
+		const EUIActionRepeatMode Mode = CMDUtils::Convert(RepeatMode);
+		return InMappingData.TargetList.ForeachCommandList([&CommandInfo, &OnExecute, Mode, bInOverrideIfAlreadyMapped](const TSharedRef<FUICommandList>& List)
 		{
-			const EUIActionRepeatMode Mode = CMDUtils::Convert(RepeatMode);
-			return TargetList.ForeachCommandList([&CommandInfo, Subsystem, &OnExecute, Mode](const TSharedRef<FUICommandList>& List)
+			if (bInOverrideIfAlreadyMapped || !List->IsActionMapped(CommandInfo))
 			{
-				return Subsystem->MapAction(List, CommandInfo.ToSharedRef(), OnExecute, Mode);
-			});
-		}
+				List->MapAction(CommandInfo, FExecuteAction::CreateLambda([OnExecute](){ OnExecute.ExecuteIfBound(); }), Mode);
+				return true;
+			}
+			return false;
+		});
 	}
 	return false;
 }
 
-bool UCommandsExtensionLibrary::MapActionToCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute)
+bool UCommandsExtensionLibrary::MapActionToCommand(UEditorInputCommand* CommandAsset, const FOnExecute& OnExecute)
 {
 	if (CommandAsset && OnExecute.IsBound())
 	{
@@ -94,23 +95,21 @@ bool UCommandsExtensionLibrary::MapActionToCommand(UEditorInputCommand* CommandA
 	return false;
 }
 
-bool UCommandsExtensionLibrary::UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier)
+bool UCommandsExtensionLibrary::UnmapAction(const FCommandMappingData& InMappingData)
 {
-	TSharedPtr<FUICommandInfo> CommandInfo = CommandIdentifier.AsInfo();
+	TSharedPtr<FUICommandInfo> CommandInfo = InMappingData.CommandIdentifier.AsInfo();
 	if (CommandInfo.IsValid())
 	{
-		if (UCommandExtensionSubsystem* Subsystem = GEditor->GetEditorSubsystem<UCommandExtensionSubsystem>())
+		InMappingData.TargetList.ForeachCommandList([&CommandInfo](const TSharedRef<FUICommandList>& List)
 		{
-			TargetList.ForeachCommandList([&CommandInfo, Subsystem](const TSharedRef<FUICommandList>& List)
-			{
-				return Subsystem->UnMapAction(List, CommandInfo.ToSharedRef());
-			});
-		}
+			List->UnmapAction(CommandInfo);
+			return true;
+		});
 	}
 	return false;
 }
 
-bool UCommandsExtensionLibrary::UnmapActionFromCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute)
+bool UCommandsExtensionLibrary::UnmapActionFromCommand(UEditorInputCommand* CommandAsset, const FOnExecute& OnExecute)
 {
 	if (CommandAsset && CommandAsset->OnInputCommandExecuted.Contains(OnExecute))
 	{
@@ -138,6 +137,11 @@ FCommandIdentifier UCommandsExtensionLibrary::MakeCommandIdentifier(const FName 
 FExistingContextBinding UCommandsExtensionLibrary::MakeExistingContextBinding(const FName BindingContextName)
 {
 	return FExistingContextBinding(BindingContextName);
+}
+
+FCommandListIdentifier UCommandsExtensionLibrary::MakeCommandListIdentifier(const FName ListIdentifier)
+{
+	return FCommandListIdentifier(ListIdentifier);
 }
 
 TArray<FName> UCommandsExtensionLibrary::GetBindingContextNames()

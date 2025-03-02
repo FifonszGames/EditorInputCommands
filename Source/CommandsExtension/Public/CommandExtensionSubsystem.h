@@ -16,15 +16,12 @@ class UCommandExtensionSubsystem : public UEditorSubsystem
 	GENERATED_BODY()
 
 public:
-	bool MapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo, const FOnExecute& Func,
-		EUIActionRepeatMode RepeatMode = EUIActionRepeatMode::RepeatDisabled);
-	
-	bool UnMapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo);
-	
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
 
 private:
+	void OnActionExecuted(FOnExecute OnExecute);
+	
 	void OnFilesLoaded();
 	void TryRegisterCommands();
 	void OnCommandListRegistered(FName CommandListName, TSharedRef<FUICommandList> CommandList);

@@ -3,7 +3,7 @@
 	"Version": 1,
 	"VersionName": "1.0",
 	"FriendlyName": "CommandsExtension",
-	"Description": "Create input commands in the editor with assets",
+	"Description": "Create editor input commands",
 	"Category": "Editor",
 	"CreatedBy": "FifonszGames",
 	"CreatedByURL": "https://dev.epicgames.com/community/profile/ojpzG/FifonszGames",

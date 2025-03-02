@@ -47,7 +47,7 @@ void SCommandIdentifierPin::OnComboBoxOpening()
 			});
 			if (ContextPinPtr)
 			{
-				FString ContextValue = (*ContextPinPtr)->GetDefaultAsString();
+				const FString ContextValue = (*ContextPinPtr)->GetDefaultAsString();
 				if (!CurrentContextValue.IsSet() || CurrentContextValue.GetValue().Equals(ContextValue))
 				{
 					IdentifierOptions.Empty();
@@ -81,10 +81,7 @@ void SCommandIdentifierPin::OnComboBoxSelectionChanged(TSharedPtr<FString> Value
 
 	if (!GraphPinObj->GetDefaultAsString().Equals(*Value))
 	{
-		const FScopedTransaction Transaction(
-			NSLOCTEXT("GraphEditor", "ChangeStringPinValue", "Change String Pin Value")
-		);
-
+		const FScopedTransaction Transaction(NSLOCTEXT("GraphEditor", "ChangeStringPinValue", "Change String Pin Value"));
 		GraphPinObj->Modify();
 		GraphPinObj->GetSchema()->TrySetDefaultValue(*GraphPinObj, *Value);
 	}

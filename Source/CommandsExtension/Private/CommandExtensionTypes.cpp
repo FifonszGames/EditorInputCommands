@@ -30,11 +30,10 @@ FCommandIdentifier FInputCommandRegisterData::GetIdentifier() const
 
 FSlateIcon FInputCommandRegisterData::GetIcon()
 {
-	return FSlateIcon(FEditorCommandStyle::Get().GetStyleSetName(),
-		FEditorCommandStyle::GetClassIconStyleSetName<UEditorInputCommand>());
+	return FSlateIcon(FEditorCommandStyle::Get().GetStyleSetName(),FEditorCommandStyle::GetClassIconStyleSetName<UEditorInputCommand>());
 }
 
-FCommandIdentifier::FCommandIdentifier(const FInputCommandRegisterData& Data) : Identifier(Data.Identifier), BindingContext(Data.ContextProvider.GetBindingContextName()) {}
+FCommandIdentifier::FCommandIdentifier(const FInputCommandRegisterData& Data) : BindingContext(Data.ContextProvider.GetBindingContextName()), Identifier(Data.Identifier) {}
 
 TSharedPtr<FUICommandInfo> FCommandIdentifier::AsInfo() const
 {

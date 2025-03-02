@@ -6,23 +6,6 @@
 #include "EditorInputCommand.h"
 #include "AssetRegistry/IAssetRegistry.h"
 
-
-bool UCommandExtensionSubsystem::MapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo, const FOnExecute& Func, EUIActionRepeatMode RepeatMode)
-{
-	if (List->IsActionMapped(CommandInfo))
-	{
-		
-	}
-	List->MapAction(CommandInfo, FExecuteAction::CreateWeakLambda(this, [Func](){ Func.ExecuteIfBound(); }), RepeatMode);
-	return true;
-}
-
-bool UCommandExtensionSubsystem::UnMapAction(const TSharedRef<FUICommandList>& List, const TSharedRef<FUICommandInfo>& CommandInfo)
-{
-	List->UnmapAction(CommandInfo);
-	return false;
-}
-
 void UCommandExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
 	Super::Initialize(Collection);
@@ -43,6 +26,11 @@ void UCommandExtensionSubsystem::Deinitialize()
 	FInputBindingManager& Manager = FInputBindingManager::Get();
 	Manager.OnRegisterCommandList.RemoveAll(this);
 	Super::Deinitialize();
+}
+
+void UCommandExtensionSubsystem::OnActionExecuted(FOnExecute OnExecute)
+{
+	OnExecute.ExecuteIfBound();
 }
 
 void UCommandExtensionSubsystem::TryRegisterCommands()

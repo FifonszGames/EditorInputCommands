@@ -11,6 +11,21 @@ class UEditorInputCommand;
 
 #define STRING_TO_TEXT(RawString) FText::FromString(TEXT(RawString))
 
+USTRUCT(BlueprintType)
+struct FCommandMappingData
+{
+	GENERATED_BODY()
+	
+	explicit FCommandMappingData() = default;
+	explicit FCommandMappingData(const FCommandListIdentifier& InTargetList, const FCommandIdentifier& InCommandIdentifier)
+		: CommandIdentifier(InCommandIdentifier), TargetList(InTargetList) {}
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCommandIdentifier CommandIdentifier;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCommandListIdentifier TargetList;
+};
+
 UENUM(BlueprintType)
 enum class ERegistrationResult : uint8
 {
@@ -32,18 +47,18 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="CommandIdentifier"))
 	static bool UnregisterInputCommand(const FCommandIdentifier& CommandIdentifier);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="TargetList, CommandIdentifier"))
-	static bool MapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier,
-		FOnExecute OnExecute, ECommandRepeatMode RepeatMode = ECommandRepeatMode::Disabled);
+	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="InMappingData", WorldContext="InCommandContext"))
+	static bool MapAction(const FCommandMappingData& InMappingData, FOnExecute OnExecute, const bool bInOverrideIfAlreadyMapped = true,
+	                      ECommandRepeatMode RepeatMode = ECommandRepeatMode::Disabled);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure=false)
-	static bool MapActionToCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute);
+	static bool MapActionToCommand(UEditorInputCommand* CommandAsset, const FOnExecute& OnExecute);
 		
-	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="TargetList, CommandIdentifier"))
-	static bool UnmapAction(const FCommandListIdentifier& TargetList, const FCommandIdentifier& CommandIdentifier);
+	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="InMappingData"))
+	static bool UnmapAction(const FCommandMappingData& InMappingData);
 	
 	UFUNCTION(BlueprintCallable, BlueprintPure=false)
-	static bool UnmapActionFromCommand(UEditorInputCommand* CommandAsset, FOnExecute OnExecute);
+	static bool UnmapActionFromCommand(UEditorInputCommand* CommandAsset, const FOnExecute& OnExecute);
 
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="CommandIdentifier"))
 	static bool GetUserDefinedCommandInputChord(const FCommandIdentifier& CommandIdentifier, const EMultipleKeyBindingIndex InChordIndex, FInputChord& OutChord);
@@ -57,6 +72,9 @@ public:
 
 	UFUNCTION(BlueprintPure, meta=(NativeMakeFunc))
 	static FExistingContextBinding MakeExistingContextBinding(UPARAM(Meta=(GetOptions=GetBindingContextNames)) const FName BindingContextName);
+
+	UFUNCTION(BlueprintPure, meta=(NativeMakeFunc))
+	static FCommandListIdentifier MakeCommandListIdentifier(UPARAM(Meta=(GetOptions=GetCommandListIdentifiers)) const FName ListIdentifier);
 	
 	UFUNCTION()
 	static TArray<FName> GetBindingContextNames();
