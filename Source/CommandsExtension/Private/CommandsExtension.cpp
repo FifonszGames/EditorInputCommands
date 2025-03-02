@@ -86,7 +86,7 @@ void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, 
 
 void FCommandsExtensionModule::TryAddUnregisteredLists()
 {
-	//ideally we don't have to manually add them but unfortunately not every module registers its own command list
+	//ideally we don't have to manually any list but unfortunately not every module registers its own command list
 	
 	FBlueprintEditorModule& BlueprintEditorModule = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet");
 	TArray<TWeakPtr<FUICommandList>>& Lists = CommandLists.FindOrAdd(TEXT("BlueprintEditor"));
