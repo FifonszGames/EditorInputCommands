@@ -44,6 +44,9 @@ USTRUCT(BlueprintType)
 struct FInputCommandRegisterData
 {
 	GENERATED_BODY()
+
+	explicit FInputCommandRegisterData() = default;
+	explicit FInputCommandRegisterData(const TSharedRef<FBindingContext>& Context, const TSharedRef<FUICommandInfo>& CommandInfo);
 	
 	bool IsValid() const;
 	

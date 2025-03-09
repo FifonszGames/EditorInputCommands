@@ -13,6 +13,13 @@ TSharedPtr<FBindingContext> FBindingContextProvider::AsContext() const
 	return FInputBindingManager::Get().GetContextByName(GetBindingContextName());
 }
 
+FInputCommandRegisterData::FInputCommandRegisterData(const TSharedRef<FBindingContext>& Context, const TSharedRef<FUICommandInfo>& CommandInfo)
+	: ContextProvider(FExistingContextBinding(Context->GetContextName())), Identifier(CommandInfo->GetCommandName()), Label(CommandInfo->GetLabel()),
+	Description(CommandInfo->GetDescription()), DefaultChord(CommandInfo->GetDefaultChord(EMultipleKeyBindingIndex::Primary)),
+	AlternateDefaultChord(CommandInfo->GetDefaultChord(EMultipleKeyBindingIndex::Primary))
+{
+}
+
 bool FInputCommandRegisterData::IsValid() const
 {
 	return ContextProvider.IsValid() && !Identifier.IsNone() && !Label.IsEmpty() && !Description.IsEmpty();	
