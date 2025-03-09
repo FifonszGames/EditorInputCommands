@@ -30,6 +30,10 @@ FScopedCommand::FScopedCommand(FInputBindingManager& InBindingManager, const FIn
 	RegisterData = FInputCommandRegisterData(BindingContext.ToSharedRef(), CommandInfo.ToSharedRef());
 }
 
+FScopedCommand::FScopedCommand(const FInputChord& DefaultChord) : FScopedCommand(FInputBindingManager::Get(), DefaultChord)
+{
+}
+
 FScopedCommand::~FScopedCommand()
 {
 	if (BindingManager)

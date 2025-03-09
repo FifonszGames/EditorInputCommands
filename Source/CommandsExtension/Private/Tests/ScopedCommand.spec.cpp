@@ -7,19 +7,26 @@ DEFINE_SPEC(FScopedCommandSpec, "CommandsExtension.ScopedCommandSpec", EAutomati
 
 void FScopedCommandSpec::Define()
 {
-	It("Should return true for valid command and false after destructor is called", [this]()
+	It("Should find valid command", [this]()
+	{
+		FInputBindingManager& BindingManager = FInputBindingManager::Get();
+		const FScopedCommand ScopedCommand(BindingManager);
+		const FInputCommandRegisterData& Data = ScopedCommand.GetData(); 
+		const TSharedPtr<FUICommandInfo> CommandInfo = BindingManager.FindCommandInContext(Data.ContextProvider.GetBindingContextName(), Data.Identifier);
+		TestTrue("Command is valid", CommandInfo.IsValid());	
+	});
+	
+	It("Should not find command after it gets out of scope", [this]()
 	{
 		FInputBindingManager& BindingManager = FInputBindingManager::Get();
 		FInputCommandRegisterData Data;
-		TSharedPtr<FUICommandInfo> CommandInfo;
-		{
-			FScopedCommand ScopedCommand(BindingManager);
-			Data = ScopedCommand.GetData(); 
-			CommandInfo = BindingManager.FindCommandInContext(Data.ContextProvider.GetBindingContextName(), Data.Identifier);
-			TestTrue("Command is valid", CommandInfo.IsValid());	
-		}
 		
-		CommandInfo = BindingManager.FindCommandInContext(Data.ContextProvider.GetBindingContextName(), Data.Identifier);
+		{
+			const FScopedCommand ScopedCommand(BindingManager);
+			Data = ScopedCommand.GetData(); 
+		}
+			
+		const TSharedPtr<FUICommandInfo> CommandInfo = BindingManager.FindCommandInContext(Data.ContextProvider.GetBindingContextName(), Data.Identifier);
 		TestFalse("Command is valid", CommandInfo.IsValid());
 	});
 }

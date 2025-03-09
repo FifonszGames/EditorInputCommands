@@ -6,6 +6,7 @@
 struct FScopedCommand
 {
 	explicit FScopedCommand(FInputBindingManager& InBindingManager, const FInputChord& DefaultChord = FInputChord());
+	explicit FScopedCommand(const FInputChord& DefaultChord = FInputChord());
 	~FScopedCommand();
 		
 	public:
