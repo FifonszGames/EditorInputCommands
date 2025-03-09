@@ -31,8 +31,7 @@ enum class ERegistrationResult : uint8
 {
 	Success,
 	AlreadyRegistered,
-	InvalidRegistrationData,
-	InvalidContext
+	InvalidRegistrationData
 };
 
 UCLASS()
@@ -47,7 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="CommandIdentifier"))
 	static bool UnregisterInputCommand(const FCommandIdentifier& CommandIdentifier);
 
-	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="InMappingData", WorldContext="InCommandContext"))
+	UFUNCTION(BlueprintCallable, BlueprintPure=false, meta=(AutoCreateRefTerm="InMappingData"))
 	static bool MapAction(const FCommandMappingData& InMappingData, FOnExecute OnExecute, const bool bInOverrideIfAlreadyMapped = true,
 	                      ECommandRepeatMode RepeatMode = ECommandRepeatMode::Disabled);
 
@@ -87,4 +86,6 @@ private:
 	static TArray<FName> GetCommandNames();
 	UFUNCTION()
 	static TArray<FName> GetCommandListIdentifiers();
+
+	friend class FCommandsExtensionLibrarySpec;
 };

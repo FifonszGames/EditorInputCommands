@@ -6,6 +6,7 @@
 
 BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "CommandsExtension.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 	FInputBindingManager* InputBindingManager;
+//TODO:: FIX, IT NEVER GOES OUT OF SCOPE AND WE CAN SEE COMMAND IN THE EDITOR
 	FScopedCommand ScopedCommand;
 	TSharedPtr<FUICommandList> DummyList;
 END_DEFINE_SPEC(FCommandListIdentifierSpec)

@@ -21,13 +21,6 @@ void UCommandsExtensionLibrary::RegisterInputCommand(const FInputCommandRegister
 		return;
 	}
 	
-	TSharedPtr<FBindingContext> BindingContext = InData.GetContext();
-	if (!BindingContext.IsValid())
-	{
-		OutResult = ERegistrationResult::InvalidContext;
-		return;
-	}
-	
 	const FCommandIdentifier Identifier = InData.GetIdentifier();
 	if (Identifier.IsRegistered())
 	{
@@ -37,7 +30,7 @@ void UCommandsExtensionLibrary::RegisterInputCommand(const FInputCommandRegister
 	
 	TSharedPtr<FUICommandInfo> Info;
 	FUICommandInfo::MakeCommandInfo(
-		BindingContext.ToSharedRef(), 
+		InData.GetContext().ToSharedRef(), 
 		Info,
 		InData.Identifier,
 		InData.Label,
