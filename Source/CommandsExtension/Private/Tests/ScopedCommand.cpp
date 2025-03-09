@@ -46,3 +46,8 @@ FScopedCommand::~FScopedCommand()
 	CommandInfo.Reset();
 	ScopedCommandCount--;
 }
+
+FName FScopedCommand::GetBindingContextName() const
+{
+	return RegisterData.ContextProvider.GetBindingContextName();
+}

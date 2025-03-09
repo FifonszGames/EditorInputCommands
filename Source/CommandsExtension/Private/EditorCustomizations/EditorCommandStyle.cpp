@@ -32,7 +32,7 @@ void FEditorCommandStyle::Shutdown()
 
 const ISlateStyle& FEditorCommandStyle::Get()
 {
-	check(StyleInstance.IsValid());
+	Init();
 	return *StyleInstance;
 }
 

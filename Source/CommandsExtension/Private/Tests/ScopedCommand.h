@@ -11,6 +11,8 @@ struct FScopedCommand
 		
 	public:
 		const FInputCommandRegisterData& GetData() const { return RegisterData; }
+		FName GetBindingContextName() const;
+	
 	private:
 		FInputCommandRegisterData RegisterData;
 		TSharedPtr<FBindingContext> BindingContext;

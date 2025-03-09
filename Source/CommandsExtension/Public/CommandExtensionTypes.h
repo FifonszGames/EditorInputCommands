@@ -124,6 +124,8 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, meta=(GetOptions="CommandsExtensionLibrary.GetCommandListIdentifiers"))
 	FName Identifier;
+
+	friend class FCommandListIdentifierSpec;
 };
 
 inline uint32 GetTypeHash(const FCommandListIdentifier& ListIdentifier)
