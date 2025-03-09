@@ -4,7 +4,7 @@
 #include "CommandExtensionTypes.h"
 #include "ScopedCommand.h"
 
-BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "CommandsExtension.CommandListIdentifierSpec", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "CommandsExtension.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 	FInputBindingManager* InputBindingManager;
 	FScopedCommand ScopedCommand;
 	TSharedPtr<FUICommandList> DummyList;

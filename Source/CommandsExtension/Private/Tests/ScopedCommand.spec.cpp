@@ -3,7 +3,7 @@
 
 #include "ScopedCommand.h"
 
-DEFINE_SPEC(FScopedCommandSpec, "CommandsExtension.ScopedCommandSpec", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+DEFINE_SPEC(FScopedCommandSpec, "CommandsExtension.ScopedCommand", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 
 void FScopedCommandSpec::Define()
 {

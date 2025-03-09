@@ -4,7 +4,7 @@
 #include "CommandExtensionTypes.h"
 #include "ScopedCommand.h"
 
-DEFINE_SPEC(FInputCommandRegisterDataSpec, "CommandsExtension.InputCommandRegisterDataSpec", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+DEFINE_SPEC(FInputCommandRegisterDataSpec, "CommandsExtension.InputCommandRegisterData", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 
 void FInputCommandRegisterDataSpec::Define()
 {
