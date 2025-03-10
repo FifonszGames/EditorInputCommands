@@ -5,20 +5,14 @@
 #include "ScopedCommand.h"
 
 BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "CommandsExtension.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
-	FInputBindingManager* InputBindingManager;
-//TODO:: FIX, IT NEVER GOES OUT OF SCOPE AND WE CAN SEE COMMAND IN THE EDITOR
-	TSharedPtr<FScopedCommand> ScopedCommand;
-	TSharedPtr<FUICommandList> DummyList;
+	TSharedPtr<FScopedCommandWithList> ScopedCommand;
 END_DEFINE_SPEC(FCommandListIdentifierSpec)
 
 void FCommandListIdentifierSpec::Define()
 {
 	BeforeEach([this]()
 	{
-		InputBindingManager = &FInputBindingManager::Get();
-		check(InputBindingManager != nullptr);
-		ScopedCommand = MakeShared<FScopedCommand>();
-		DummyList = InputBindingManager->RegisterNewCommandList(ScopedCommand->GetBindingContextName());
+		ScopedCommand = MakeShared<FScopedCommandWithList>();
 	});
 	
 	It("Should not be valid", [this]()
@@ -62,12 +56,6 @@ void FCommandListIdentifierSpec::Define()
 		
 	AfterEach([this]()
 	{
-		if (DummyList.IsValid())
-		{
-			const bool bDummyBool = InputBindingManager->UnregisterCommandList(ScopedCommand->GetBindingContextName(), DummyList.ToSharedRef());
-			DummyList.Reset();
-		}
 		ScopedCommand.Reset();
-		InputBindingManager = nullptr;
 	});
 }
