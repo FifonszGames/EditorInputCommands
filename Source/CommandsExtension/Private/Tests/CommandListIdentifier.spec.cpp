@@ -7,7 +7,7 @@
 BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "CommandsExtension.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 	FInputBindingManager* InputBindingManager;
 //TODO:: FIX, IT NEVER GOES OUT OF SCOPE AND WE CAN SEE COMMAND IN THE EDITOR
-	FScopedCommand ScopedCommand;
+	TSharedPtr<FScopedCommand> ScopedCommand;
 	TSharedPtr<FUICommandList> DummyList;
 END_DEFINE_SPEC(FCommandListIdentifierSpec)
 
@@ -17,7 +17,8 @@ void FCommandListIdentifierSpec::Define()
 	{
 		InputBindingManager = &FInputBindingManager::Get();
 		check(InputBindingManager != nullptr);
-		DummyList = InputBindingManager->RegisterNewCommandList(ScopedCommand.GetBindingContextName());
+		ScopedCommand = MakeShared<FScopedCommand>();
+		DummyList = InputBindingManager->RegisterNewCommandList(ScopedCommand->GetBindingContextName());
 	});
 	
 	It("Should not be valid", [this]()
@@ -28,13 +29,13 @@ void FCommandListIdentifierSpec::Define()
 	
 	It("Should have valid command list", [this]()
 	{
-		const FCommandListIdentifier ValidIdentifier(ScopedCommand.GetBindingContextName());
+		const FCommandListIdentifier ValidIdentifier(ScopedCommand->GetBindingContextName());
 		TestTrue("Has valid command list", ValidIdentifier.HasValidCommandList());
 	});
 		
 	It("Should be valid", [this]()
 	{
-		const FCommandListIdentifier ValidIdentifier(ScopedCommand.GetBindingContextName());
+		const FCommandListIdentifier ValidIdentifier(ScopedCommand->GetBindingContextName());
 		TestTrue("Identifier is valid", ValidIdentifier.IsValid());
 	});
 	
@@ -47,14 +48,14 @@ void FCommandListIdentifierSpec::Define()
 	
 	It("Should have at least one command related list", [this]()
 	{
-		const FCommandListIdentifier ValidIdentifier(ScopedCommand.GetBindingContextName());
+		const FCommandListIdentifier ValidIdentifier(ScopedCommand->GetBindingContextName());
 		const TArray<TWeakPtr<FUICommandList>>* Lists = ValidIdentifier.GetRelatedCommandLists();
 		TestTrue("Result is true", Lists && !Lists->IsEmpty());
 	});
 
 	It("Foreach should return true on valid identifier", [this]()
 	{
-		const FCommandListIdentifier ValidIdentifier(ScopedCommand.GetBindingContextName());
+		const FCommandListIdentifier ValidIdentifier(ScopedCommand->GetBindingContextName());
 		const bool bForeachResult = ValidIdentifier.ForeachCommandList([](const TSharedRef<FUICommandList>& List){ return true; });
 		TestTrue("Result is true", bForeachResult);
 	});
@@ -63,9 +64,10 @@ void FCommandListIdentifierSpec::Define()
 	{
 		if (DummyList.IsValid())
 		{
-			const bool bDummyBool = InputBindingManager->UnregisterCommandList(ScopedCommand.GetBindingContextName(), DummyList.ToSharedRef());
+			const bool bDummyBool = InputBindingManager->UnregisterCommandList(ScopedCommand->GetBindingContextName(), DummyList.ToSharedRef());
 			DummyList.Reset();
 		}
+		ScopedCommand.Reset();
 		InputBindingManager = nullptr;
 	});
 }
