@@ -29,7 +29,8 @@ public class CommandsExtension : ModuleRules
 				"GraphEditor",
 				"ToolWidgets",
 				"Projects",
-				"Kismet"
+				"Kismet",
+				"InputCore"
 			});
 	}
 }
