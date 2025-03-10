@@ -51,3 +51,25 @@ FName FScopedCommand::GetBindingContextName() const
 {
 	return RegisterData.ContextProvider.GetBindingContextName();
 }
+
+FScopedCommandWithList::FScopedCommandWithList(FInputBindingManager& InBindingManager, const FInputChord& DefaultChord) : FScopedCommand(InBindingManager, DefaultChord),
+	DummyList(InBindingManager.RegisterNewCommandList(GetBindingContextName()))
+{
+}
+
+FScopedCommandWithList::FScopedCommandWithList(const FInputChord& DefaultChord) : FScopedCommand(DefaultChord),
+	DummyList(BindingManager->RegisterNewCommandList(GetBindingContextName()))
+{
+}
+
+FScopedCommandWithList::~FScopedCommandWithList()
+{
+	if (DummyList.IsValid())
+	{
+		if (BindingManager)
+		{
+			const bool bDummyBool = BindingManager->UnregisterCommandList(GetBindingContextName(), DummyList.ToSharedRef());
+		}
+		DummyList.Reset();
+	}
+}

@@ -29,4 +29,11 @@ void FScopedCommandSpec::Define()
 		const TSharedPtr<FUICommandInfo> CommandInfo = BindingManager.FindCommandInContext(Data.ContextProvider.GetBindingContextName(), Data.Identifier);
 		TestFalse("Command is valid", CommandInfo.IsValid());
 	});
+
+	It("Should return valid command list", [this]()
+	{
+		FInputBindingManager& BindingManager = FInputBindingManager::Get();
+		const FScopedCommandWithList ScopedCommand(BindingManager);
+		TestTrue("Command list is valid", ScopedCommand.GetList().IsValid());	
+	});
 }
