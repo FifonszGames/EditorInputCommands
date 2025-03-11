@@ -11,6 +11,7 @@ struct FScopedCommand
 		
 	public:
 		const FInputCommandRegisterData& GetData() const { return RegisterData; }
+		TSharedPtr<FUICommandInfo> GetCommandInfo() { return CommandInfo; }
 		FName GetBindingContextName() const;
 	
 	protected:

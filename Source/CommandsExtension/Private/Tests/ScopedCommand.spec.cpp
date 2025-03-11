@@ -15,6 +15,14 @@ void FScopedCommandSpec::Define()
 		const TSharedPtr<FUICommandInfo> CommandInfo = BindingManager.FindCommandInContext(Data.ContextProvider.GetBindingContextName(), Data.Identifier);
 		TestTrue("Command is valid", CommandInfo.IsValid());	
 	});
+
+	It("Should return valid command info", [this]()
+	{
+		FInputBindingManager& BindingManager = FInputBindingManager::Get();
+		FScopedCommand ScopedCommand(BindingManager);
+		const TSharedPtr<FUICommandInfo> CommandInfo = ScopedCommand.GetCommandInfo(); 
+		TestTrue("Command info is valid", CommandInfo.IsValid());	
+	});
 	
 	It("Should not find command after it gets out of scope", [this]()
 	{
