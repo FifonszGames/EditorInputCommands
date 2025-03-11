@@ -8,16 +8,24 @@
 BEGIN_DEFINE_SPEC(FCommandsExtensionLibrarySpec, "CommandsExtension.CommandsExtensionLibrary", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 	TSharedPtr<FScopedCommandWithList> ScopedCommandWithList;
 	TSharedPtr<FInputChord> Chord;
+	TSharedPtr<FModifierKeysState> KeyState;
+
 	TSharedPtr<FCommandMappingData> MappingData;
 	TSharedPtr<FOnExecute> OnExecute;
 	TObjectPtr<ULibrarySpecTestObject> TestObject;
-	TSharedPtr<FModifierKeysState> KeyState;
 END_DEFINE_SPEC(FCommandsExtensionLibrarySpec)
 
 #define FUNCTION_TESTS_DESC(ClassName, Function) FString::Printf(TEXT("Function tests -> %s::%s"), *(ClassName::StaticClass()->GetName()), GET_FUNCTION_NAME_STRING_CHECKED(ClassName, Function))
 
 void FCommandsExtensionLibrarySpec::Define()
 {
+	BeforeEach([this]()
+	{
+		Chord = MakeShared<FInputChord>(EKeys::Apostrophe, true, true, true, true);
+		KeyState = MakeShareable(new FModifierKeysState(Chord->bShift, !Chord->bShift, Chord->bCtrl, !Chord->bCtrl, Chord->bAlt, !Chord->bAlt, Chord->bCmd, !Chord->bCmd, false));
+		ScopedCommandWithList = MakeShared<FScopedCommandWithList>(*Chord);
+	});
+	
 	Describe(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, RegisterInputCommand), [this]()
 	{
 		auto GetFunctionResultString = [](ERegistrationResult Result)
@@ -40,8 +48,7 @@ void FCommandsExtensionLibrarySpec::Define()
 		
 		It(GetFunctionResultString(ERegistrationResult::AlreadyRegistered), [this, GetEqualTestString]()
 		{
-			const FScopedCommand Command;
-			const FInputCommandRegisterData& SameData = Command.GetData();
+			const FInputCommandRegisterData& SameData = ScopedCommandWithList->GetData();
 			
 			ERegistrationResult Result = ERegistrationResult::Success;
 			UCommandsExtensionLibrary::RegisterInputCommand(SameData, Result);
@@ -50,11 +57,9 @@ void FCommandsExtensionLibrarySpec::Define()
 
 		It(GetFunctionResultString(ERegistrationResult::Success), [this, GetEqualTestString]()
 		{
-			const FScopedCommand ScopedCommand;
-			
 			FInputCommandRegisterData ValidData;
 			{
-				ValidData.ContextProvider = FExistingContextBinding(ScopedCommand.GetBindingContextName());
+				ValidData.ContextProvider = FExistingContextBinding(ScopedCommandWithList->GetBindingContextName());
 				ValidData.Identifier = FName(FGuid::NewGuid().ToString());
 				ValidData.Label = FText::FromString(FGuid::NewGuid().ToString());
 				ValidData.Description = FText::FromString(FGuid::NewGuid().ToString());
@@ -64,7 +69,7 @@ void FCommandsExtensionLibrarySpec::Define()
 			UCommandsExtensionLibrary::RegisterInputCommand(ValidData, Result);
 			TestEqual(GetEqualTestString(ERegistrationResult::Success), Result, ERegistrationResult::Success);
 			
-			//not a big fan of that :/
+			//not a big fan of that here :/
 			UCommandsExtensionLibrary::UnregisterInputCommand(ValidData.GetIdentifier());
 		});
 	});
@@ -100,10 +105,6 @@ void FCommandsExtensionLibrarySpec::Define()
 			OnExecute = MakeShared<FOnExecute>();
 			OnExecute->BindDynamic(TestObject, &ULibrarySpecTestObject::TestFunc);
 			
-			Chord = MakeShared<FInputChord>(EKeys::Apostrophe, true, true, true, true);
-			KeyState = MakeShareable(new FModifierKeysState(Chord->bShift, !Chord->bShift, Chord->bCtrl, !Chord->bCtrl, Chord->bAlt, !Chord->bAlt, Chord->bCmd, !Chord->bCmd, false));
-			ScopedCommandWithList = MakeShared<FScopedCommandWithList>(*Chord);
-						
 			const FCommandListIdentifier ListIdentifier(ScopedCommandWithList->GetBindingContextName());
 			const FCommandIdentifier CommandIdentifier(ScopedCommandWithList->GetData());
 			MappingData = MakeShared<FCommandMappingData>(ListIdentifier, CommandIdentifier);
@@ -197,8 +198,6 @@ void FCommandsExtensionLibrarySpec::Define()
 		
 		AfterEach([this]
 		{
-			ScopedCommandWithList.Reset();
-			Chord.Reset();
 			if (MappingData.IsValid())
 			{
 				UCommandsExtensionLibrary::UnmapAction(*MappingData);
@@ -210,27 +209,37 @@ void FCommandsExtensionLibrarySpec::Define()
 			{
 				TestObject->RemoveFromRoot();
 			}
-			KeyState.Reset();
 		});
 	});
 	
-	// It("GetBindingContextNames() should not return an empty array", [this]()
-	// {
-	// 	const TArray<FName> Names = UCommandsExtensionLibrary::GetBindingContextNames();
-	// 	TestFalse("Binding names are empty", Names.IsEmpty());
-	// });
-	//
-	// It("GetCommandNames() should not return an empty array", [this]()
-	// {
-	// 	const TArray<FName> Names = UCommandsExtensionLibrary::GetCommandNames();
-	// 	TestFalse("Command names are empty", Names.IsEmpty());
-	// });
-	//
-	// It("GetCommandListIdentifiers() should not return an empty array", [this]()
-	// {
-	// 	const TArray<FName> Names = UCommandsExtensionLibrary::GetCommandNames();
-	// 	TestFalse("Command list identifier names are empty", Names.IsEmpty());
-	// });
+	It(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, GetBindingContextNames), [this]()
+	{
+		const TArray<FName> BindingContextNames = UCommandsExtensionLibrary::GetBindingContextNames();
+		const bool bResult = BindingContextNames.Contains(ScopedCommandWithList->GetBindingContextName());
+		TestTrue("Binding names contain scoped command's binding context name", bResult);
+	});
+	
+	It(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, GetCommandNames), [this]()
+	{
+		const TArray<FName> CommandNames = UCommandsExtensionLibrary::GetCommandNames();
+		const bool bResult = CommandNames.Contains(ScopedCommandWithList->GetData().Identifier);
+		TestTrue("Command names contain scoped command's identifier", bResult);
+	});
+	
+	It(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, GetCommandListIdentifiers), [this]()
+	{
+		const TArray<FName> CommandListIdentifiers = UCommandsExtensionLibrary::GetCommandListIdentifiers();
+		const bool bResult = CommandListIdentifiers.Contains(ScopedCommandWithList->GetBindingContextName());
+		TestTrue("Command list identifiers contain scoped command's list name", bResult);
+	});
+
+	AfterEach([this]()
+	{
+		ScopedCommandWithList.Reset();
+		Chord.Reset();
+		KeyState.Reset();
+	});
+	
 	//
 	//
 	// Describe(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, IsCommandRegistered), [this]()

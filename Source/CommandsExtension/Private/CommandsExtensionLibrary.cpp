@@ -171,18 +171,13 @@ void UCommandsExtensionLibrary::ForeachCommandInContext(const FName& ContextName
 TArray<FName> UCommandsExtensionLibrary::GetCommandNames()
 {
 	TArray<FName> CommandNames;
-	FInputBindingManager& BindingManager = FInputBindingManager::Get();
-	
-	TArray<TSharedPtr<FBindingContext>> OutInputContexts;
-	BindingManager.GetKnownInputContexts(OutInputContexts);
-	
-	for (const TSharedPtr<FBindingContext>& Context : OutInputContexts)
+	ForeachBindingContext([&CommandNames](const TSharedPtr<FBindingContext>& Context)
 	{
 		ForeachCommandInContext(Context->GetContextName(), [&CommandNames](const TSharedPtr<FUICommandInfo>& Command)
 		{
 			CommandNames.AddUnique(Command->GetCommandName());
 		});
-	}
+	});
 	return CommandNames;
 }
 
