@@ -10,6 +10,8 @@ BEGIN_DEFINE_SPEC(FCommandsExtensionLibrarySpec, "CommandsExtension.CommandsExte
 	TSharedPtr<FInputChord> Chord;
 	TSharedPtr<FCommandMappingData> MappingData;
 	TSharedPtr<FOnExecute> OnExecute;
+	TObjectPtr<ULibrarySpecTestObject> TestObject;
+	TSharedPtr<FModifierKeysState> KeyState;
 END_DEFINE_SPEC(FCommandsExtensionLibrarySpec)
 
 #define FUNCTION_TESTS_DESC(ClassName, Function) FString::Printf(TEXT("Function tests -> %s::%s"), *(ClassName::StaticClass()->GetName()), GET_FUNCTION_NAME_STRING_CHECKED(ClassName, Function))
@@ -86,47 +88,107 @@ void FCommandsExtensionLibrarySpec::Define()
 		});
 	});
 
-	Describe(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, MapAction), [this]()
+	Describe("Mapping tests", [this]()
 	{
 		BeforeEach([this]()
 		{
 			Chord = MakeShared<FInputChord>(EKeys::Apostrophe, true, true, true, true);
 			ScopedCommandWithList = MakeShared<FScopedCommandWithList>(*Chord);
 			OnExecute = MakeShared<FOnExecute>();
-			
+						
 			const FCommandListIdentifier ListIdentifier(ScopedCommandWithList->GetBindingContextName());
 			const FCommandIdentifier CommandIdentifier(ScopedCommandWithList->GetData());
 			MappingData = MakeShared<FCommandMappingData>(ListIdentifier, CommandIdentifier);
 		});
 		
-		It("Should not map command to invalid data", [this]()
+		Describe(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, MapAction), [this]()
 		{
-			FCommandMappingData InvalidMappingData;
-			const bool bResult = UCommandsExtensionLibrary::MapAction(InvalidMappingData, *OnExecute);
-			TestFalse("Is result false", bResult);
+			It("Should not map command to invalid data", [this]()
+			{
+				FCommandMappingData InvalidMappingData;
+				const bool bResult = UCommandsExtensionLibrary::MapAction(InvalidMappingData, *OnExecute);
+				TestFalse("Is result false", bResult);
+			});
+			
+			It("Should properly map command", [this]()
+			{
+				const bool bResult = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
+				TestTrue("Is result ture", bResult);
+			});
+			
+			Describe("Mapping with bindings", [this]()
+			{
+				BeforeEach([this]()
+				{
+					TestObject = NewObject<ULibrarySpecTestObject>();
+					TestObject->bWasCalled = false;
+					TestObject->bWasCalled2 = false;
+					
+					TestObject->AddToRoot();
+					OnExecute->BindDynamic(TestObject, &ULibrarySpecTestObject::TestFunc);
+					KeyState = MakeShareable(new FModifierKeysState(Chord->bShift, !Chord->bShift, Chord->bCtrl, !Chord->bCtrl, Chord->bAlt, !Chord->bAlt, Chord->bCmd, !Chord->bCmd, false));
+				});
+				
+				It("Should properly execute event after receiving input", [this]()
+				{
+					const bool bWasActionMapped = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
+					TestTrue("Was action mapped", bWasActionMapped);
+					
+					const bool bWasCommandProcessed = ScopedCommandWithList->GetList()->ProcessCommandBindings(Chord->Key, *KeyState, false);
+					TestTrue("Was command processed", bWasCommandProcessed);
+					TestTrue("Was function called", TestObject->bWasCalled);
+				});
+
+				It("Should override event", [this]()
+				{
+					const bool bWasActionMapped = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
+					TestTrue("Was action mapped", bWasActionMapped);
+					
+					OnExecute->Unbind();
+					OnExecute->BindDynamic(TestObject, &ULibrarySpecTestObject::TestFunc2);
+					
+					const bool bWasActionMapped2 = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
+					TestTrue("Was action mapped2", bWasActionMapped2);
+					
+					const bool bWasCommandProcessed = ScopedCommandWithList->GetList()->ProcessCommandBindings(Chord->Key, *KeyState, false);
+					TestTrue("Was command processed", bWasCommandProcessed);
+					TestFalse("Was function not called", TestObject->bWasCalled);
+					TestTrue("Was function 2 called", TestObject->bWasCalled2);
+				});
+
+				It("Should not override action", [this]()
+				{
+					const bool bWasActionMapped = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
+					TestTrue("Was action mapped", bWasActionMapped);
+					
+					FOnExecute OnExecute2;
+					OnExecute2.BindDynamic(TestObject, &ULibrarySpecTestObject::TestFunc2);
+
+					const bool bWasActionMapped2 = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute, false);
+					TestFalse("Was action mapped2", bWasActionMapped2);
+					
+					const bool bWasCommandProcessed = ScopedCommandWithList->GetList()->ProcessCommandBindings(Chord->Key, *KeyState, false);
+					TestTrue("Was command processed", bWasCommandProcessed);
+					TestFalse("Was function 2 not called", TestObject->bWasCalled2);
+					TestTrue("Was function called", TestObject->bWasCalled);
+				});
+				
+				AfterEach([this]
+				{
+					if (TestObject)
+					{
+						TestObject->RemoveFromRoot();
+					}
+					KeyState.Reset();
+				});
+			});
 		});
 		
-		It("Should properly map command", [this]()
-		{
-			const bool bResult = UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
-			TestTrue("Is result ture", bResult);
-		});
+		// Describe(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, UnmapAction), [this]()
+		// {
+		// 	
+		// });
 		
-		It("Should properly execute event after receiving input", [this]()
-		{
-			ULibrarySpecTestObject* TestObject = NewObject<ULibrarySpecTestObject>();
-			TestObject->bWasCalled = false;
-			
-			OnExecute->BindDynamic(TestObject, &ULibrarySpecTestObject::TestFunc);
-			UCommandsExtensionLibrary::MapAction(*MappingData, *OnExecute);
-			
-			const FModifierKeysState KeyState(Chord->bShift, !Chord->bShift, Chord->bCtrl, !Chord->bCtrl, Chord->bAlt, !Chord->bAlt, Chord->bCmd, !Chord->bCmd, false);
-			const bool bWasCommandProcessed = ScopedCommandWithList->GetList()->ProcessCommandBindings(Chord->Key, KeyState, false);
-
-			TestTrue("Was command processed", bWasCommandProcessed);
-			TestTrue("Was function called", TestObject->bWasCalled);
-		});
-
 		AfterEach([this]
 		{
 			ScopedCommandWithList.Reset();

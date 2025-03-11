@@ -15,5 +15,11 @@ public:
 	{
 		bWasCalled = true;
 	}
+	UFUNCTION()
+	void TestFunc2()
+	{
+		bWasCalled2 = true;
+	}
 	bool bWasCalled = false;
+	bool bWasCalled2 = false;
 };
