@@ -232,30 +232,11 @@ void FCommandsExtensionLibrarySpec::Define()
 		const bool bResult = CommandListIdentifiers.Contains(ScopedCommandWithList->GetBindingContextName());
 		TestTrue("Command list identifiers contain scoped command's list name", bResult);
 	});
-
+	
 	AfterEach([this]()
 	{
 		ScopedCommandWithList.Reset();
 		Chord.Reset();
 		KeyState.Reset();
 	});
-	
-	//
-	//
-	// Describe(FUNCTION_TESTS_DESC(UCommandsExtensionLibrary, IsCommandRegistered), [this]()
-	// {
-	// 	It("Should return false for invalid identifier", [this]()
-	// 	{
-	// 		const FCommandIdentifier InvalidIdentifier = FCommandIdentifier(NAME_None, NAME_None);
-	// 		const bool bResult = UCommandsExtensionLibrary::IsCommandRegistered(InvalidIdentifier);
-	// 		TestFalse("Identifier is not registered", bResult);
-	// 	});
-	// 	
-	// 	It("Should return true for valid identifier", [this]()
-	// 	{
-	// 		const FCommandIdentifier ValidIdentifier = FCommandIdentifier(NAME_None, NAME_None);
-	// 		const bool bResult = UCommandsExtensionLibrary::IsCommandRegistered(ValidIdentifier);
-	// 		TestTrue("Identifier is registered", bResult);
-	// 	});
-	// });
 }
