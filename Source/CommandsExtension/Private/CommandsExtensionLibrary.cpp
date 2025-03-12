@@ -184,5 +184,5 @@ TArray<FName> UCommandsExtensionLibrary::GetCommandNames()
 TArray<FName> UCommandsExtensionLibrary::GetCommandListIdentifiers()
 {
 	const FCommandsExtensionModule& Module = FModuleManager::GetModuleChecked<FCommandsExtensionModule>(FCommandsExtensionModule::GetModuleName());
-	return Module.GetAvailableContexts();
+	return Module.GetAvailableCommandListContexts();
 }

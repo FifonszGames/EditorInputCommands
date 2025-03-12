@@ -15,7 +15,7 @@ UCLASS()
 class UEditorInputCommand : public UDataAsset
 {
 	GENERATED_BODY()
-
+	
 public:
 	void RegisterCommand();
 	void UnregisterCommand();

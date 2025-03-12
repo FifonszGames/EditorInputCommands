@@ -4,7 +4,6 @@
 
 #include "IPropertyTypeCustomization.h"
 
-class IDetailLayoutBuilder;
 struct FCommandIdentifier;
 
 class FInputCommandIdentifierCustomization : public IPropertyTypeCustomization

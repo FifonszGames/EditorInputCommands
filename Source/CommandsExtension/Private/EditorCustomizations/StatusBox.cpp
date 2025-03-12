@@ -23,8 +23,7 @@ static const TMap<EStatusBoxState, FStatusBoxData> DefaultStatusData =
 		{
 			FStatusBoxData(AppIcon("Icons.ErrorWithColor"),
 			STRING_TO_TEXT("Error"),
-			FStyleColors::Error)
-		}},
+			FStyleColors::Error)}},
 	{EStatusBoxState::Warning,
 		{
 			FStatusBoxData(AppIcon("Icons.WarningWithColor"),

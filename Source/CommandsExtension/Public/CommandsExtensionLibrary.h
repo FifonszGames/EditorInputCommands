@@ -35,7 +35,7 @@ enum class ERegistrationResult : uint8
 };
 
 UCLASS()
-class UCommandsExtensionLibrary : public UBlueprintFunctionLibrary
+class COMMANDSEXTENSION_API UCommandsExtensionLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
@@ -75,13 +75,12 @@ public:
 	UFUNCTION(BlueprintPure, meta=(NativeMakeFunc))
 	static FCommandListIdentifier MakeCommandListIdentifier(UPARAM(Meta=(GetOptions=GetCommandListIdentifiers)) const FName ListIdentifier);
 	
-	UFUNCTION()
-	static TArray<FName> GetBindingContextNames();
-	
 	static void ForeachBindingContext(const TFunctionRef<void(const TSharedPtr<FBindingContext>& Context)>& InFunc);
 	static void ForeachCommandInContext(const FName& ContextName, const TFunctionRef<void(const TSharedPtr<FUICommandInfo>& Command)>& InFunc);
 	
 private:
+	UFUNCTION()
+	static TArray<FName> GetBindingContextNames();
 	UFUNCTION()
 	static TArray<FName> GetCommandNames();
 	UFUNCTION()

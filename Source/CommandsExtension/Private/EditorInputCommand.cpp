@@ -67,7 +67,7 @@ void UEditorInputCommand::BeginDestroy()
 
 void UEditorInputCommand::ExecuteCommand()
 {
-	for (const auto& EditorUtilityObject : RunnableObjects)
+	for (const TSoftClassPtr<UEditorUtilityObject>& EditorUtilityObject : RunnableObjects)
 	{
 		if (const UClass* UtilityObjectClass = EditorUtilityObject.LoadSynchronous())
 		{

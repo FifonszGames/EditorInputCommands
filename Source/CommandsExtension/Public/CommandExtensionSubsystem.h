@@ -20,8 +20,6 @@ public:
 	virtual void Deinitialize() override;
 
 private:
-	void OnActionExecuted(FOnExecute OnExecute);
-	
 	void OnFilesLoaded();
 	void TryRegisterCommands();
 	void OnCommandListRegistered(FName CommandListName, TSharedRef<FUICommandList> CommandList);

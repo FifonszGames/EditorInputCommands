@@ -12,8 +12,8 @@ public:
 	virtual void StartupModule() override;
 	virtual void ShutdownModule() override;
 
-	const TArray<TWeakPtr<FUICommandList>>* GetCommandListsForContext(const FName& ContextName) const;
-	TArray<FName> GetAvailableContexts() const;
+	virtual const TArray<TWeakPtr<FUICommandList>>* GetCommandListsForContext(const FName& ContextName) const;
+	virtual TArray<FName> GetAvailableCommandListContexts() const;
 
 	void TryAddUnregisteredLists();
 	

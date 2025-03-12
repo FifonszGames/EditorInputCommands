@@ -3,7 +3,6 @@
 #include "CommandsExtension.h"
 
 #include "BlueprintEditorModule.h"
-#include "EdGraphUtilities.h"
 #include "EditorInputCommand.h"
 #include "EditorCustomizations/CommandIdentifierPinFactory.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
@@ -56,7 +55,7 @@ const TArray<TWeakPtr<FUICommandList>>* FCommandsExtensionModule::GetCommandList
 	return CommandLists.Find(ContextName);
 }
 
-TArray<FName> FCommandsExtensionModule::GetAvailableContexts() const
+TArray<FName> FCommandsExtensionModule::GetAvailableCommandListContexts() const
 {
 	TArray<FName> Keys;
 	CommandLists.GenerateKeyArray(Keys);
@@ -86,7 +85,7 @@ void FCommandsExtensionModule::OnUnregisterCommandList(const FName ContextName, 
 
 void FCommandsExtensionModule::TryAddUnregisteredLists()
 {
-	//ideally we don't have to manually any list but unfortunately not every module registers its own command list
+	//ideally we don't have to manually add any list but unfortunately not every module registers its own
 	
 	FBlueprintEditorModule& BlueprintEditorModule = FModuleManager::LoadModuleChecked<FBlueprintEditorModule>("Kismet");
 	TArray<TWeakPtr<FUICommandList>>& Lists = CommandLists.FindOrAdd(TEXT("BlueprintEditor"));

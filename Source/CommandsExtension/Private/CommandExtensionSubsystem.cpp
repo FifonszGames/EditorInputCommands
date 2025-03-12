@@ -24,14 +24,8 @@ void UCommandExtensionSubsystem::Initialize(FSubsystemCollectionBase& Collection
 
 void UCommandExtensionSubsystem::Deinitialize()
 {
-	FInputBindingManager& Manager = FInputBindingManager::Get();
-	Manager.OnRegisterCommandList.RemoveAll(this);
+	FInputBindingManager::Get().OnRegisterCommandList.RemoveAll(this);
 	Super::Deinitialize();
-}
-
-void UCommandExtensionSubsystem::OnActionExecuted(FOnExecute OnExecute)
-{
-	OnExecute.ExecuteIfBound();
 }
 
 void UCommandExtensionSubsystem::TryRegisterCommands()
@@ -50,7 +44,7 @@ void UCommandExtensionSubsystem::OnCommandListRegistered(FName CommandListName, 
 	{
 		if (Command.GetCommandListIdentifier() == CommandListName)
 		{
-			//TODO:: this will do a lot more work than needed, fix so that it only adds binding for new list
+			//this will do a lot more work than needed make it so that it only adds binding for the new list if necessary
 			Command.MapToTargetList();
 		}
 	});

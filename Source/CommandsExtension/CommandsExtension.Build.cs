@@ -10,15 +10,14 @@ public class CommandsExtension : ModuleRules
 
 		PublicDependencyModuleNames.AddRange(new string[]
 			{
-				"Core"
+				"Core",
+				"Slate"
 			});
-			
 		
 		PrivateDependencyModuleNames.AddRange(new string[]
 			{
 				"CoreUObject",
 				"Engine",
-				"Slate",
 				"SlateCore",
 				"EditorSubsystem",
 				"UnrealEd",

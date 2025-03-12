@@ -4,7 +4,6 @@
 
 #include "IDetailCustomization.h"
 
-
 class SEditorCommandMappingStatusBox;
 class IDetailLayoutBuilder;
 class SEditorCommandRegistrationStatusBox;
