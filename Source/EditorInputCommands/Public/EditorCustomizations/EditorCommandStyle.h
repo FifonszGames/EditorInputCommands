@@ -13,16 +13,16 @@ public:
 	static const ISlateStyle& Get();
 	static FName GetOutlineStyleName();
 	
-	template<typename ClassType>
-	static FName GetClassIconStyleSetName()
+	template <typename T>
+	static typename TEnableIf<TIsDerivedFrom<T, UObject>::IsDerived, FName>::Type GetClassIconStyleSetName()
 	{
-		const FString ClassName = ClassType::StaticClass()->GetName();
+		const FString ClassName = T::StaticClass()->GetName();
 		return FName(FString::Printf(TEXT("ClassIcon.%s"), *ClassName));
 	}
-	template<typename ClassType>
-	static FName GetClassThumbnailStyleSetName()
+	template <typename T>
+	static typename TEnableIf<TIsDerivedFrom<T, UObject>::IsDerived, FName>::Type GetClassThumbnailStyleSetName()
 	{
-		const FString ClassName = ClassType::StaticClass()->GetName();
+		const FString ClassName = T::StaticClass()->GetName();
 		return FName(FString::Printf(TEXT("ClassThumbnail.%s"), *ClassName));
 	}
 	
