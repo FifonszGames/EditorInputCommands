@@ -86,5 +86,5 @@ private:
 	UFUNCTION()
 	static TArray<FName> GetCommandListIdentifiers();
 
-	friend class FEditorInputCommandsLibrary;
+	friend class FEditorInputCommandsLibrarySpec;
 };

@@ -13,7 +13,7 @@ struct FBindingContextProvider
 
 	bool IsValid() const { return AsContext().IsValid(); }
 	
-	virtual FName GetBindingContextName() const { return NAME_None; }
+	virtual FName GetBindingContextName() const PURE_VIRTUAL(FBindingContextProvider::GetBindingContextName, return NAME_None;);
 	virtual TSharedPtr<FBindingContext> AsContext() const;
 };
 

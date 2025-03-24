@@ -5,7 +5,7 @@
 #include "LibrarySpecTestObject.h"
 #include "ScopedCommand.h"
 
-BEGIN_DEFINE_SPEC(FEditorInputCommandsLibrary, "EditorInputCommands.EditorInputCommandsLibrary", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+BEGIN_DEFINE_SPEC(FEditorInputCommandsLibrarySpec, "EditorInputCommands.EditorInputCommandsLibrary", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 	TSharedPtr<FScopedCommandWithList> ScopedCommandWithList;
 	TSharedPtr<FInputChord> Chord;
 	TSharedPtr<FModifierKeysState> KeyState;
@@ -13,11 +13,11 @@ BEGIN_DEFINE_SPEC(FEditorInputCommandsLibrary, "EditorInputCommands.EditorInputC
 	TSharedPtr<FCommandMappingData> MappingData;
 	TSharedPtr<FOnExecute> OnExecute;
 	TObjectPtr<ULibrarySpecTestObject> TestObject;
-END_DEFINE_SPEC(FEditorInputCommandsLibrary)
+END_DEFINE_SPEC(FEditorInputCommandsLibrarySpec)
 
 #define FUNCTION_TESTS_DESC(ClassName, Function) FString::Printf(TEXT("Function tests -> %s::%s"), *(ClassName::StaticClass()->GetName()), GET_FUNCTION_NAME_STRING_CHECKED(ClassName, Function))
 
-void FEditorInputCommandsLibrary::Define()
+void FEditorInputCommandsLibrarySpec::Define()
 {
 	BeforeEach([this]()
 	{
