@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Widgets/Layout/SBorder.h"
+#include "Templates/SharedPointer.h"
+
 #define SLATE_STATUS_BOX_ARGS(Type) \
 	SLATE_BEGIN_ARGS(Type) \
 			: _Padding(16.0f) \
@@ -13,6 +16,9 @@
 	SLATE_ARGUMENT(FVector2D, IconSize) \
 	SLATE_ARGUMENT(bool, AutoWrapText) \
 	SLATE_DEFAULT_SLOT(FArguments, Content)
+
+class STextBlock;
+class SImage;
 
 enum class EStatusBoxState : uint8
 {

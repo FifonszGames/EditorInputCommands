@@ -2,11 +2,11 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
 #include "EditorSubsystem.h"
 #include "EditorInputCommandsSubsystem.generated.h"
 
 class UEditorInputCommand;
+class FUICommandList;
 
 DECLARE_DYNAMIC_DELEGATE(FOnExecute);
 

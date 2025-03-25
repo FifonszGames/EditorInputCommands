@@ -4,10 +4,12 @@
 
 #include "BlueprintEditorModule.h"
 #include "EditorInputCommand.h"
+#include "PropertyEditorModule.h"
 #include "EditorCustomizations/CommandIdentifierPinFactory.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
 #include "EditorCustomizations/EditorInputCommandCustomization.h"
 #include "EditorCustomizations/InputCommandIdentifierCustomization.h"
+#include "Framework/Commands/InputBindingManager.h"
 
 class FEditorCommandStyle;
 

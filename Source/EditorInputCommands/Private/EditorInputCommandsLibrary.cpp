@@ -4,6 +4,7 @@
 
 #include "EditorInputCommands.h"
 #include "EditorInputCommand.h"
+#include "Framework/Commands/InputBindingManager.h"
 
 namespace CMDUtils
 {

@@ -1,9 +1,10 @@
 ﻿// Copyright FifonszGames 2025 All Rights Reserved.
 
-
+#include "Misc/AutomationTest.h"
 #include "EditorInputCommandsLibrary.h"
 #include "LibrarySpecTestObject.h"
 #include "ScopedCommand.h"
+#include "Framework/Commands/UICommandList.h"
 
 BEGIN_DEFINE_SPEC(FEditorInputCommandsLibrarySpec, "EditorInputCommands.EditorInputCommandsLibrary", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 	TSharedPtr<FScopedCommandWithList> ScopedCommandWithList;

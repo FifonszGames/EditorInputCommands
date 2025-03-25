@@ -6,10 +6,11 @@
 #include "DetailCategoryBuilder.h"
 #include "DetailLayoutBuilder.h"
 #include "DetailWidgetRow.h"
-#include "EditorInputCommand.h"
+#include "UObject/UnrealType.h"
 #include "IPropertyUtilities.h"
 #include "EditorCustomizations/EditorCommandMappingStatusBox.h"
 #include "EditorCustomizations/EditorCommandRegistrationStatusBox.h"
+#include "Widgets/Input/SButton.h"
 
 TSharedRef<SButton> FEditorInputCommandCustomization::CreateButton(const FText& Name, const TFunctionRef<void(UEditorInputCommand& Command)>& OnClicked, const IsEnabledCallback& IsEnabled)
 {

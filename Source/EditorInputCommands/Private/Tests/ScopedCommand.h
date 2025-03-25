@@ -4,6 +4,8 @@
 
 #include "EditorInputCommandTypes.h"
 
+class FUICommandList;
+
 struct FScopedCommand
 {
 	explicit FScopedCommand(FInputBindingManager& InBindingManager, const FInputChord& DefaultChord = FInputChord());

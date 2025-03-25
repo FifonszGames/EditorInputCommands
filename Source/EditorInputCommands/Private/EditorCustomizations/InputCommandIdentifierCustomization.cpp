@@ -7,6 +7,7 @@
 #include "EditorInputCommandTypes.h"
 #include "IDetailChildrenBuilder.h"
 #include "PropertyCustomizationHelpers.h"
+#include "Framework/Commands/InputBindingManager.h"
 
 TSharedRef<IPropertyTypeCustomization> FInputCommandIdentifierCustomization::MakeInstance()
 {

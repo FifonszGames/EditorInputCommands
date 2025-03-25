@@ -1,7 +1,8 @@
 ﻿// Copyright FifonszGames 2025 All Rights Reserved.
 
-
+#include "Misc/AutomationTest.h"
 #include "ScopedCommand.h"
+#include "Framework/Commands/InputBindingManager.h"
 
 DEFINE_SPEC(FScopedCommandSpec, "EditorInputCommands.ScopedCommand", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
 

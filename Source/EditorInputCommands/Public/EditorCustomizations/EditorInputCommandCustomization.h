@@ -3,12 +3,16 @@
 #pragma once
 
 #include "IDetailCustomization.h"
+#include "Templates/Function.h"
+#include "EditorInputCommand.h"
+#include "UObject/WeakObjectPtrTemplates.h"
 
+class SButton;
 class SEditorCommandMappingStatusBox;
 class IDetailLayoutBuilder;
 class SEditorCommandRegistrationStatusBox;
 class IPropertyUtilities;
-class UEditorInputCommand;
+struct FPropertyChangedEvent;
 
 typedef TFunctionRef<bool(const UEditorInputCommand& Command)> IsEnabledCallback;
 

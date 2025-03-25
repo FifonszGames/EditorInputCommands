@@ -3,7 +3,11 @@
 #include "EditorInputCommands/Public/EditorCustomizations/StatusBox.h"
 
 #include "EditorInputCommandsLibrary.h"
+#include "Components/HorizontalBox.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
+#include "Styling/StyleColors.h"
+#include "Widgets/Images/SImage.h"
+#include "Widgets/Text/STextBlock.h"
 
 #define AppIcon(Name) FAppStyle::Get().GetBrush(Name)
 

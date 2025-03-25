@@ -5,6 +5,7 @@
 #include "Modules/ModuleManager.h"
 
 class FCommandIdentifierPinFactory;
+class FUICommandList;
 
 class FEditorInputCommandsModule : public IModuleInterface
 {

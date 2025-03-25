@@ -3,10 +3,13 @@
 
 #include "EditorInputCommandTypes.h"
 
+#include "Framework/Commands/UICommandList.h"
 #include "EditorInputCommands.h"
 #include "EditorInputCommand.h"
 #include "Algo/AnyOf.h"
 #include "EditorCustomizations/EditorCommandStyle.h"
+#include "Framework/Commands/InputBindingManager.h"
+#include "Styling/ISlateStyle.h"
 
 TSharedPtr<FBindingContext> FBindingContextProvider::AsContext() const
 {

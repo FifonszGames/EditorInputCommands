@@ -2,8 +2,8 @@
 
 
 #include "ScopedCommand.h"
-
-#include "EditorInputCommandsLibrary.h"
+#include "Framework/Commands/InputBindingManager.h"
+#include "Styling/AppStyle.h"
 
 uint16 FScopedCommand::ScopedCommandCount = 0;
 	

@@ -2,6 +2,9 @@
 
 #pragma once
 
+#include "Templates/UnrealTypeTraits.h"
+#include "Templates/SharedPointer.h"
+
 class FSlateStyleSet;
 class ISlateStyle;
 

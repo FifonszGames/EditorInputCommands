@@ -5,7 +5,9 @@
 
 #include "EditorInputCommands.h"
 #include "EditorInputCommand.h"
+#include "AssetRegistry/AssetData.h"
 #include "AssetRegistry/IAssetRegistry.h"
+#include "Framework/Commands/InputBindingManager.h"
 
 void UEditorInputCommandsSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {

@@ -7,10 +7,12 @@
 #include "EditorInputCommand.h"
 #include "Interfaces/IPluginManager.h"
 #include "Styling/SlateStyleRegistry.h"
+#include "Styling/SlateStyle.h"
+#include "Styling/StyleColors.h"
 
 #define IMAGE_BRUSH(RelativePath,...) FSlateImageBrush(Style->RootToContentDir(RelativePath, TEXT(".png")), __VA_ARGS__)
 
-TSharedPtr< FSlateStyleSet > FEditorCommandStyle::StyleInstance = nullptr;
+TSharedPtr<FSlateStyleSet> FEditorCommandStyle::StyleInstance = nullptr;
 
 void FEditorCommandStyle::Init()
 {

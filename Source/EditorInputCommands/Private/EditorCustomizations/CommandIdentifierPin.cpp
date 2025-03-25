@@ -4,6 +4,7 @@
 #include "EditorCustomizations/CommandIdentifierPin.h"
 
 #include "EditorInputCommandsLibrary.h"
+#include "ScopedTransaction.h"
 #include "SSearchableComboBox.h"
 
 void SCommandIdentifierPin::Construct(const FArguments& InArgs, UEdGraphPin* InGraphPinObj)

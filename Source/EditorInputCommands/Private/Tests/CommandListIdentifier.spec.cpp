@@ -1,7 +1,9 @@
 ﻿// Copyright FifonszGames 2025 All Rights Reserved.
 
-
+#include "Misc/AutomationTest.h"
 #include "EditorInputCommandTypes.h"
+#include "Templates/SharedPointer.h"
+#include "Framework/Commands/UICommandList.h"
 #include "ScopedCommand.h"
 
 BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "EditorInputCommands.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)

@@ -2,7 +2,12 @@
 
 #pragma once
 
+#include "Framework/Commands/UICommandInfo.h"
+#include "Framework/Commands/InputChord.h"
+#include "Templates/SharedPointer.h"
 #include "EditorInputCommandTypes.generated.h"
+
+class FUICommandList;
 
 USTRUCT(NotBlueprintType)
 struct FBindingContextProvider
