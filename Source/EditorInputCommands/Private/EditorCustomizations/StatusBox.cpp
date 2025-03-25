@@ -1,4 +1,4 @@
-﻿// Copyright FifonszGames. All Rights Reserved.
+﻿// Copyright FifonszGames 2025 All Rights Reserved.
 
 #include "EditorInputCommands/Public/EditorCustomizations/StatusBox.h"
 
