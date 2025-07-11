@@ -1,7 +1,7 @@
-﻿{
+{
 	"FileVersion": 3,
 	"Version": 1,
-	"VersionName": "1.0",
+	"VersionName": "1.1",
 	"FriendlyName": "Editor Input Commands",
 	"Description": "Create editor input commands without C++",
 	"Category": "Editor",
@@ -10,10 +10,10 @@
 	"DocsURL": "https://fifonsz-games.notion.site/Editor-Input-Commands-Plugin-Docs-1b5d59546335803591d4f4b77709b764?pvs=74",
 	"FabURL": "com.epicgames.launcher://ue/Fab/product/da8384b7-52f5-43cb-836f-2626851d35a3",
 	"CanContainContent": false,
-	"IsBetaVersion": true,
+	"IsBetaVersion": false,
 	"IsExperimentalVersion": false,
 	"Installed": false,
-	"EngineVersion": "5.5",
+	"EngineVersion": "5.6",
 	"Modules": [
 		{
 			"Name": "EditorInputCommands",
