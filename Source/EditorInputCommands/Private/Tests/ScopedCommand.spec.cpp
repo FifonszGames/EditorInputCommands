@@ -4,7 +4,7 @@
 #include "ScopedCommand.h"
 #include "Framework/Commands/InputBindingManager.h"
 
-DEFINE_SPEC(FScopedCommandSpec, "EditorInputCommands.ScopedCommand", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+DEFINE_SPEC(FScopedCommandSpec, "EditorInputCommands.ScopedCommand", EAutomationTestFlags::EngineFilter | EAutomationTestFlags::EditorContext)
 
 void FScopedCommandSpec::Define()
 {

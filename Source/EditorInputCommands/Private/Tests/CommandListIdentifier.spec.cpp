@@ -6,7 +6,7 @@
 #include "Framework/Commands/UICommandList.h"
 #include "ScopedCommand.h"
 
-BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "EditorInputCommands.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+BEGIN_DEFINE_SPEC(FCommandListIdentifierSpec, "EditorInputCommands.CommandListIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags::EditorContext)
 	TSharedPtr<FScopedCommandWithList> ScopedCommand;
 END_DEFINE_SPEC(FCommandListIdentifierSpec)
 

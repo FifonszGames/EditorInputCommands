@@ -5,7 +5,7 @@
 #include "EditorInputCommandTypes.h"
 #include "ScopedCommand.h"
 
-BEGIN_DEFINE_SPEC(FCommandIdentifierSpec, "EditorInputCommands.CommandIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+BEGIN_DEFINE_SPEC(FCommandIdentifierSpec, "EditorInputCommands.CommandIdentifier", EAutomationTestFlags::EngineFilter | EAutomationTestFlags::EditorContext)
 	TSharedPtr<FScopedCommand> ScopedCommand;
 	TSharedPtr<FInputChord> Chord;
 END_DEFINE_SPEC(FCommandIdentifierSpec)

@@ -4,7 +4,7 @@
 #include "EditorInputCommandTypes.h"
 #include "ScopedCommand.h"
 
-BEGIN_DEFINE_SPEC(FExistingContentBindingSpec, "EditorInputCommands.ExistingContentBinding", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+BEGIN_DEFINE_SPEC(FExistingContentBindingSpec, "EditorInputCommands.ExistingContentBinding", EAutomationTestFlags::EngineFilter | EAutomationTestFlags::EditorContext)
 	TSharedPtr<FScopedCommand> ScopedCommand;
 END_DEFINE_SPEC(FExistingContentBindingSpec)
 

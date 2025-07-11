@@ -11,7 +11,7 @@ class UEditorUtilityObject;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnInputCommandExecuted);
 
-UCLASS()
+UCLASS(BlueprintType)
 class UEditorInputCommand : public UDataAsset
 {
 	GENERATED_BODY()
@@ -50,7 +50,7 @@ private:
 	UFUNCTION()
 	void ExecuteCommand();
 
-	UPROPERTY()
+	UPROPERTY(Transient)
 	FOnExecute ExecuteDelegate;
 	
 	friend class FEditorInputCommandCustomization;

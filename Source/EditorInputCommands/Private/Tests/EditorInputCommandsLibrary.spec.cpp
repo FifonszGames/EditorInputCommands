@@ -6,7 +6,7 @@
 #include "ScopedCommand.h"
 #include "Framework/Commands/UICommandList.h"
 
-BEGIN_DEFINE_SPEC(FEditorInputCommandsLibrarySpec, "EditorInputCommands.EditorInputCommandsLibrary", EAutomationTestFlags::EngineFilter | EAutomationTestFlags_ApplicationContextMask)
+BEGIN_DEFINE_SPEC(FEditorInputCommandsLibrarySpec, "EditorInputCommands.EditorInputCommandsLibrary", EAutomationTestFlags::EngineFilter | EAutomationTestFlags::EditorContext)
 	TSharedPtr<FScopedCommandWithList> ScopedCommandWithList;
 	TSharedPtr<FInputChord> Chord;
 	TSharedPtr<FModifierKeysState> KeyState;

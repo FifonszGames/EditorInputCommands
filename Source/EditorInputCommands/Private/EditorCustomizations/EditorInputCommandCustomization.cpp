@@ -48,8 +48,8 @@ void FEditorInputCommandCustomization::CustomizeDetails(IDetailLayoutBuilder& In
 	{
 		return;
 	}
-	IDetailsView* DetailsView = InDetailLayout.GetDetailsView();
-	check(DetailsView);
+	TSharedPtr<IDetailsView> DetailsView = InDetailLayout.GetDetailsViewSharedPtr();
+	check(DetailsView.IsValid());
 	DetailsView->OnFinishedChangingProperties().AddSP(this, &FEditorInputCommandCustomization::OnFinishChangingProperties);
 	Utilities = InDetailLayout.GetPropertyUtilities();
 	Target = Cast<UEditorInputCommand>(SelectedObjects[0]);
