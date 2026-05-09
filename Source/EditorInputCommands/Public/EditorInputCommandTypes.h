@@ -22,7 +22,7 @@ struct FBindingContextProvider
 	virtual TSharedPtr<FBindingContext> AsContext() const;
 };
 
-USTRUCT(BlueprintType, meta = (HasNativeMake = "EditorInputCommandsLibrary.MakeCommandIdentifier"))
+USTRUCT(BlueprintType, meta = (HasNativeMake = "/Script/EditorInputCommands.EditorInputCommandsLibrary.MakeExistingContextBinding"))
 struct FExistingContextBinding : public FBindingContextProvider
 {
 	GENERATED_BODY()
@@ -32,7 +32,7 @@ struct FExistingContextBinding : public FBindingContextProvider
 	virtual FName GetBindingContextName() const override { return BindingContextName; }
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="EditorInputCommandsLibrary.GetBindingContextNames"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="/Script/EditorInputCommands.EditorInputCommandsLibrary.GetBindingContextNames"))
 	FName BindingContextName;
 };
 
@@ -76,7 +76,7 @@ struct FInputCommandRegisterData
 	EUserInterfaceActionType UIActionType = EUserInterfaceActionType::None;
 };
 
-USTRUCT(BlueprintType, meta = (HasNativeMake = "EditorInputCommandsLibrary.MakeCommandIdentifier"))
+USTRUCT(BlueprintType, meta = (HasNativeMake = "/Script/EditorInputCommands.EditorInputCommandsLibrary.MakeCommandIdentifier"))
 struct FCommandIdentifier
 {
 	GENERATED_BODY()
@@ -96,15 +96,15 @@ struct FCommandIdentifier
 	bool GetUserDefinedChord(const EMultipleKeyBindingIndex InChordIndex, FInputChord& OutChord) const;
 
 protected:
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="EditorInputCommandsLibrary.GetBindingContextNames"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="/Script/EditorInputCommands.EditorInputCommandsLibrary.GetBindingContextNames"))
 	FName BindingContext;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="EditorInputCommandsLibrary.GetCommandNames"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="/Script/EditorInputCommands.EditorInputCommandsLibrary.GetCommandNames"))
 	FName Identifier;
 
 	friend class FInputCommandIdentifierCustomization;
 };
 
-USTRUCT(BlueprintType, meta = (HasNativeMake = "EditorInputCommandsLibrary.MakeCommandListIdentifier"))
+USTRUCT(BlueprintType, meta = (HasNativeMake = "/Script/EditorInputCommands.EditorInputCommandsLibrary.MakeCommandListIdentifier"))
 struct FCommandListIdentifier
 {
 	GENERATED_BODY()
@@ -127,7 +127,7 @@ protected:
 	const TArray<TWeakPtr<FUICommandList>>* GetRelatedCommandLists() const;
 	bool HasValidCommandList() const;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="EditorInputCommandsLibrary.GetCommandListIdentifiers"))
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Editor Input Commands", meta=(GetOptions="/Script/EditorInputCommands.EditorInputCommandsLibrary.GetCommandListIdentifiers"))
 	FName Identifier;
 
 	friend class FCommandListIdentifierSpec;
